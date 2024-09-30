@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otrio Game</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: lightgrey;
+        }
+        header {
+            position: absolute; /* Position it absolutely to keep it on top */
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10; /* Ensure it is on top of other content */
+            text-align: center;
+            width: 100%;
+            padding: 10px;
+            gap: 10px;
+
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            gap: 20px; /* Space between game area and sidebar */
+        }
+
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .game-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 20px; /* Space between different pieces containers */
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            background-color: #fff;
+            border: 2px solid #000;
+            padding: 5px;
+            position: relative;
+        }
+
+        .cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #e0e0e0;
+            border: 1px solid #ccc;
+            width: 100px;
+            height: 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .piece {
+            border-radius: 50%;
+            border: 3px solid transparent;
+            display: inline-block;
+            position: absolute;
+            cursor: pointer;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+
+        .piece.large {
+            width: 90px;
+            height: 90px;
+            z-index: 1;
+        }
+
+        .piece.medium {
+            width: 60px;
+            height: 60px;
+            z-index: 2;
+        }
+
+        .piece.small {
+            width: 30px;
+            height: 30px;
+            z-index: 3;
+        }
+
+        .blue { border-color: blue; }
+        .green { border-color: green; }
+        .red { border-color: red; }
+        .yellow { border-color: yellow; }
+
+        .pieces-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .yellow-pieces-container, .red-pieces-container {
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .blue-pieces-container, .green-pieces-container {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+        }
+
+        .blue-piece, .green-piece, .yellow-piece, .red-piece {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 10px;
+        }
+
+        .scoreboard {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .scoreboard table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .scoreboard th, .scoreboard td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .scoreboard th {
+            text-align: left;
+        }
+
+        .scoreboard td.player {
+            text-align: left;
+        }
+
+        .scoreboard td.score {
+            text-align: right;
+        }
+
+        .reset-button {
+            font-size: 1em;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .reset-button:hover {
+            background-color: #0056b3;
+        }
+
+        .sidebar {
+            width: 200px; /* Fixed width for both sidebars */
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 20px;
+
+        }
+
+        .sidebar h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Welcome to Otrio!</h1>
+</header>
+<div class="container">
+    <div class="sidebar">
+        <div class="scoreboard" id="scoreboard">
+<!--            <table>-->
+<!--                <tr>-->
+<!--                    <th>Player</th>-->
+<!--                    <th>Score</th>-->
+<!--                </tr>-->
+<!--                <tr>-->
+<!--                    <td class="player">Blue</td>-->
+<!--                    <td class="score">Score</td>-->
+<!--                </tr>-->
+<!--                <tr>-->
+<!--                    <td class="player">Red</td>-->
+<!--                    <td class="score">Score</td>-->
+<!--                </tr>-->
+<!--                <tr>-->
+<!--                    <td class="player">Green</td>-->
+<!--                    <td class="score">Score</td>-->
+<!--                </tr>-->
+<!--                <tr>-->
+<!--                    <td class="player">Yellow</td>-->
+<!--                    <td class="score">Score</td>-->
+<!--                </tr>-->
+<!--            </table>-->
+            <p>Blue Score: <span id="blue-score">0</span></p>
+            <p>Red Score: <span id="red-score">0</span></p>
+            <p>Green Score: <span id="green-score">0</span></p>
+            <p>Yellow Score: <span id="yellow-score">0</span></p>
+        </div>
+        <button class="reset-button" onclick="resetGame()">Reset Game</button>
+    </div>
+    <div class="game-area">
+        <div class="pieces-container">
+            <div class="blue-pieces-container">
+                <div class="cell" data-position ="11">
+                    <div class="piece large blue" id="blue-large-1" draggable="true"></div>
+                    <div class="piece medium blue" id="blue-medium-1" draggable="true"></div>
+                    <div class="piece small blue" id="blue-small-1" draggable="true"></div>
+                </div>
+                <div class="cell" data-position ="12">
+                    <div class="piece large blue" id="blue-large-2" draggable="true"></div>
+                    <div class="piece medium blue" id="blue-medium-2" draggable="true"></div>
+                    <div class="piece small blue" id="blue-small-2" draggable="true"></div>
+                </div>
+                <div class="cell" data-position ="13">
+                    <div class="piece large blue" id="blue-large-3" draggable="true"></div>
+                    <div class="piece medium blue" id="blue-medium-3" draggable="true"></div>
+                    <div class="piece small blue" id="blue-small-3" draggable="true"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="game-container">
+            <div class="yellow-pieces-container">
+                <div class="cell" data-position ="41">
+                    <div class="piece large yellow" id="yellow-large-1" draggable="true"></div>
+                    <div class="piece medium yellow" id="yellow-medium-1" draggable="true"></div>
+                    <div class="piece small yellow" id="yellow-small-1" draggable="true"></div>
+                </div>
+                <div class="cell" data-position ="42">
+                    <div class="piece large yellow" id="yellow-large-2" draggable="true"></div>
+                    <div class="piece medium yellow" id="yellow-medium-2" draggable="true"></div>
+                    <div class="piece small yellow" id="yellow-small-2" draggable="true"></div>
+                </div>
+                <div class="cell" data-position ="43">
+                    <div class="piece large yellow" id="yellow-large-3" draggable="true"></div>
+                    <div class="piece medium yellow" id="yellow-medium-3" draggable="true"></div>
+                    <div class="piece small yellow" id="yellow-small-3" draggable="true"></div>
+                </div>
+            </div>
+
+            <div class="board" id="board">
+                <div class="cell" data-position="0"></div>
+                <div class="cell" data-position="1"></div>
+                <div class="cell" data-position="2"></div>
+                <div class="cell" data-position="3"></div>
+                <div class="cell" data-position="4"></div>
+                <div class="cell" data-position="5"></div>
+                <div class="cell" data-position="6"></div>
+                <div class="cell" data-position="7"></div>
+                <div class="cell" data-position="8"></div>
+            </div>
+
+            <div class="red-pieces-container">
+                <div class="cell" data-position ="21">
+                    <div class="piece large red" draggable="true" id="red-large-1"></div>
+                    <div class="piece medium red" draggable="true" id="red-medium-1"></div>
+                    <div class="piece small red" draggable="true" id="red-small-1"></div>
+                </div>
+                <div class="cell" data-position ="22">
+                    <div class="piece large red" draggable="true" id="red-large-2"></div>
+                    <div class="piece medium red" draggable="true" id="red-medium-2"></div>
+                    <div class="piece small red" draggable="true" id="red-small-2"></div>
+                </div>
+                <div class="cell" data-position ="23">
+                    <div class="piece large red" draggable="true" id="red-large-3"></div>
+                    <div class="piece medium red" draggable="true" id="red-medium-3"></div>
+                    <div class="piece small red" id="red-small-3" draggable="true"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="green-pieces-container">
+            <div class="cell" data-position ="31">
+                <div class="piece large green" id="green-large-1" draggable="true"></div>
+                <div class="piece medium green" id="green-medium-1" draggable="true"></div>
+                <div class="piece small green" id="green-small-1" draggable="true"></div>
+            </div>
+            <div class="cell" data-position ="32">
+                <div class="piece large green" id="green-large-2" draggable="true"></div>
+                <div class="piece medium green" id="green-medium-2" draggable="true"></div>
+                <div class="piece small green" id="green-small-2" draggable="true"></div>
+            </div>
+            <div class="cell" data-position ="33">
+                <div class="piece large green" id="green-large-3" draggable="true"></div>
+                <div class="piece medium green" id="green-medium-3" draggable="true"></div>
+                <div class="piece small green" id="green-small-3" draggable="true"></div>
+            </div>
+
+        </div>
+    </div>
+    <div class="sidebar">
+        <h3>Rules</h3>
+        <ul>
+            <li>Win by 3 concentric pieces in any one space</li>
+            <li>Win by 3 of the same size in any direction</li>
+            <li>Win by 3 pieces in ascending or descending order</li>
+        </ul>
+    </div>
+</div>
+
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const board = document.getElementById('board');
+        const pieces = document.querySelectorAll('.piece');
+        const scoreboard = {
+            blue: 0,
+            red: 0,
+            green: 0,
+            yellow: 0
+        };
+        let currentTurn = 'blue'; // Track whose turn it is
+
+        // Function to update the scoreboard
+        function updateScoreboard(player) {
+            if (scoreboard.hasOwnProperty(player)) {
+                scoreboard[player]++;
+                document.getElementById(`${player}-score`).innerText = scoreboard[player];  // Assuming you have elements for displaying scores
+            }
+        }
+
+        async function checkWinAndUpdateScore() {
+            try {
+                const response = await fetch('/game/checkWin');
+                const winner = await response.text();
+
+                if (winner) {
+                    if (winner === "blue") {
+                        updateScoreboard("blue");
+                    } else if (winner === "red") {
+                        updateScoreboard("red");
+                    } else if (winner === "green") {
+                        updateScoreboard("green");
+                    } else if (winner === "yellow") {
+                        updateScoreboard("yellow");
+                    }
+                    alert(`${winner} player has won!`);
+                    await resetGame();
+                } else {
+                    console.log("No winner yet");
+                }
+            } catch (error) {
+                console.error("Error fetching winner:", error);
+            }
+        }
+
+        async function resetGame() {
+            try {
+                // Call the backend to reset the game state
+                const response = await fetch('/game/reset', {
+                    method: 'POST',
+                });
+
+                if (response.ok) {
+                    console.log('Game has been reset on the server.');
+
+                    // // Clear all cells on the game board
+                    // document.querySelectorAll('.cell').forEach(cell => {
+                    //     cell.innerHTML = '';  // Clear the cell content
+                    // });
+
+                    // Reset the pieces to their original positions
+                    resetPieces();
+
+
+
+                    console.log('Game has been reset on the frontend.');
+                } else {
+                    console.error('Failed to reset the game on the server.');
+                }
+            } catch (error) {
+                console.error('Error resetting the game:', error);
+            }
+        }
+
+        function resetPieces() {
+            Object.keys(originalPositions).forEach(pieceId => {
+                const piece = document.getElementById(pieceId);
+                const originalPosition = originalPositions[pieceId];
+                const originalCell = originalPosition.cell;
+
+                // Remove the piece from its current parent (if moved)
+                if (piece.parentNode) {
+                    piece.parentNode.removeChild(piece);
+                }
+
+                // Append the piece back to its original cell
+                if (originalCell) {
+                    originalCell.appendChild(piece);
+                }
+
+                // Reset any styles (like position) if necessary
+                piece.style.left = '';
+                piece.style.top = '';
+            });
+
+            console.log('All pieces have been reset.');
+        }
+
+        // Track original positions
+        const originalPositions = {};
+
+        // Add dragstart event for all pieces
+        pieces.forEach(piece => {
+            piece.addEventListener('dragstart', (e) => {
+                const pieceId = e.target.id;
+                const parentCell = e.target.closest('.cell');
+
+                // Store the original position
+                if (parentCell) {
+                    const originalPosition = parentCell.dataset.position;
+                    originalPositions[pieceId] = {
+                        cell: parentCell,
+                        position: originalPosition
+                    };
+                    console.log('Original position stored:', pieceId, originalPosition);
+                } else {
+                    console.warn('Parent cell not found for piece:', pieceId);
+                }
+
+                console.log('Dragging piece:', pieceId);
+                e.dataTransfer.setData('piece-id', pieceId);
+                e.dataTransfer.effectAllowed = 'move';
+            });
+        });
+
+        // Allow drop on the board
+        board.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        });
+
+        // Handle the drop event
+        board.addEventListener('drop', async (e) => {
+            e.preventDefault();
+
+            const pieceId = e.dataTransfer.getData('piece-id');
+            const cell = e.target.closest('.cell'); // Drop target
+
+            if (cell && pieceId) {
+                const piece = document.getElementById(pieceId);
+
+                if (piece) {
+                    console.log('Dropped piece:', pieceId, 'on cell:', cell);
+
+                    // Clone the piece to allow reuse (optional, based on your game logic)
+                    const clonedPiece = piece.cloneNode(true);
+
+                    // Place the piece in the new cell
+                    cell.appendChild(clonedPiece);
+                    // Center the piece in its new cell
+                    centerPiece(clonedPiece, cell);
+
+                    // Temporarily remove the original piece from its parent container
+                    piece.parentElement.removeChild(piece);
+
+                    console.log('Removed original piece:', pieceId);
+
+                    // Extract color and size data
+                    const color = piece.classList.contains('blue') ? 'blue' :
+                        piece.classList.contains('green') ? 'green' :
+                            piece.classList.contains('red') ? 'red' :
+                                piece.classList.contains('yellow') ? 'yellow' : 'unknown';
+
+                    const size = piece.classList.contains('large') ? 2 :
+                        piece.classList.contains('medium') ? 1 :
+                            piece.classList.contains('small') ? 0 : 'unknown';
+
+                    // Extract row and column from cell's dataset
+                    const col = cell.dataset.position % 3;
+                    const row = Math.floor(cell.dataset.position / 3);
+
+                    try {
+                        const response = await fetch('/game/move', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded'
+                            },
+                            body: new URLSearchParams({
+                                row: row,
+                                col: col,
+                                color: color,
+                                size: size
+                            })
+                        });
+
+                        const result = await response.json();
+                        console.log('Move result:', result);
+                        checkWinAndUpdateScore();
+                        // const winResponse = fetch('/game/checkWin');
+                        // const winner = response.text();
+                        // if (winner != null) {
+                        //     if (winner === "blue") {
+                        //         updateScoreboard("blue");
+                        //
+                        //     } else if (winner === "red") {
+                        //         updateScoreboard("red");
+                        //     } else if (winner === "green") {
+                        //         updateScoreboard("green");
+                        //     } else if (winner === "yellow") {
+                        //         updateScoreboard("yellow");
+                        //     }
+                        //     alert(`${winner} player has won!`);
+                        // } else {
+                        //     console.log("No winner yet");
+                        // }
+
+                        // Optionally update the UI based on the result
+                        if (!result) {
+                            console.warn('Move failed!');
+
+                            // Move the piece back to its original position
+                            const originalPositionData = originalPositions[pieceId];
+                            if (originalPositionData) {
+                                const { cell: originalCell, position } = originalPositionData;
+                                if (originalCell) {
+                                    console.log('Moving piece back to:', originalCell);
+
+                                    // Insert the piece back into the original cell
+                                    originalCell.appendChild(piece);
+                                    // Center the piece in its original cell
+                                    centerPiece(piece, originalCell);
+
+                                    // Remove the piece from the current cell
+                                    cell.removeChild(clonedPiece);
+                                } else {
+                                    console.warn('Original cell not found with position:', position);
+                                }
+                            } else {
+                                console.warn('Original position not found for piece:', pieceId);
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error making move:', error);
+
+                        // Move the piece back to its original position
+                        const originalPositionData = originalPositions[pieceId];
+                        if (originalPositionData) {
+                            const { cell: originalCell, position } = originalPositionData;
+                            if (originalCell) {
+                                console.log('Moving piece back to:', originalCell);
+
+                                // Insert the piece back into the original cell
+                                originalCell.appendChild(piece);
+                                // Center the piece in its original cell
+                                centerPiece(piece, originalCell);
+
+                                // Remove the piece from the current cell
+                                cell.removeChild(clonedPiece);
+                            } else {
+                                console.warn('Original cell not found with position:', position);
+                            }
+                        } else {
+                            console.warn('Original position not found for piece:', pieceId);
+                        }
+                    }
+                } else {
+                    console.warn('Piece not found with ID:', pieceId);
+                }
+            }
+        });
+
+        function centerPiece(piece, cell) {
+            piece.style.position = 'absolute';
+            piece.style.top = '50%';
+            piece.style.left = '50%';
+            piece.style.transform = 'translate(-50%, -50%)';
+        }
+    });
+</script>
+
+</body>
+</html>
