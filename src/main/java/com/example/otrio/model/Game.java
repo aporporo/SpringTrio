@@ -1,6 +1,19 @@
 package com.example.otrio.model;
 
+import lombok.Data;
+
+@Data
 public class Game {
+    private String gameId;
+    private Player player1;
+    private Player player2;
+    private Player player3;
+    private Player player4;
+    private Board board;
+    private GameStatus status;
+    private String winner;
+
+
 //    private Board board;
 //    private int playerTurn;
 //    public Player player1;
