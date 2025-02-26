@@ -17,51 +17,83 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @AllArgsConstructor
-@RequestMapping("/game")
+@RequestMapping("/game") // base path for all endpoints
 public class GameController {
     private final GameService gameService;
     private final SimpMessagingTemplate simpMessagingTemplate;
 
     /**
-     *
-     * */
+     * This will start a new game with the player as the host
+     * @param player The player initiating the game
+     * @return The created game
+     */
     @PostMapping("/start")
     public ResponseEntity<Game> start(@RequestBody Player player) {
         log.info("start game request: {}", player);
         return ResponseEntity.ok(gameService.createGame(player));
     }
 
-
-
+    /**
+     * Connects a player to an existing game using a ConnectRequest which contains playerName and gameId
+     * @param request Contains playerName and gameId
+     * @return The updated game state
+     * @throws InvalidParamException If params are incorrect
+     * @throws InvalidGameException If the game is incorrect or doesn't exist
+     */
     @PostMapping("/connect")
     public ResponseEntity<Game> connect(@RequestBody ConnectRequest request) throws InvalidParamException, InvalidGameException {
         log.info("connect request: {}", request);
         return ResponseEntity.ok(gameService.connectToGame(request.getPlayerName(), request.getGameId()));
     }
 
+    /**
+     * Connects a player to a random available game
+     * @param player the player trying to join
+     * @return The updated game state
+     * @throws NotFoundException If no available games are found
+     */
     @PostMapping("/connect/random")
     public ResponseEntity<Game> connectRandom(@RequestBody Player player) throws NotFoundException {
         log.info("connect random {}", player);
         return ResponseEntity.ok(gameService.connectToRandomGame(player));
     }
 
+    /**
+     * This will process a player's move and update the game state
+     * Sends an update through WebSockets to notify other players
+     * @param moveRequest Contains player, gameId, playerId, row, column, size
+     * @return the updated game state
+     * @throws InvalidParamException If move params are incorrect
+     * @throws InvalidGameException if the move is not allowed
+     */
     @PostMapping("/gameMove")
     public ResponseEntity<Game> gameMove(@RequestBody GameMoveRequest moveRequest)
             throws InvalidParamException, InvalidGameException {
-
+        // Get game and player details
         Game game = gameService.getGameById(moveRequest.getGameId());
         Player player = gameService.findPlayerById(game, moveRequest.getPlayerId());
+
+        // Process move
         gameService.gameMove(player, moveRequest.getGameId(), moveRequest.getRow(), moveRequest.getCol(), moveRequest.getSize());
+
+        // send real-time update to subscribed clients
         simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game);
 
         return ResponseEntity.ok(game);
     }
 
+    /**
+     * Reset the game and notifies all players in real-time
+     * @return the reset game state
+     */
     @PostMapping("/reset")
     public ResponseEntity<Game> reset() {
         Game game = gameService.getGameById("1");
         gameService.reset("1");
+
+        // Update clients about reset
         simpMessagingTemplate.convertAndSend("/topic/game-reset/" + game.getGameId(), game);
+
         return ResponseEntity.ok(game);
 
     }
