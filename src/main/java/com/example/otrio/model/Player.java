@@ -4,6 +4,15 @@ public class Player {
     public Piece[] piece;
     public String playerName;
     public String color;
+
+    public int getPlayerId() {
+        return playerId;
+    }
+
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
+    }
+
     public int playerId;
 
     public Player (String color, String playerName, int playerId) {
@@ -24,6 +33,9 @@ public class Player {
         }
 
     }
+    public void resetPieces() {
+        this.piece = new Piece[9];
+    }
 
 
 
@@ -43,29 +55,29 @@ public class Player {
         return piece;
     }
 
+    public void setPieces(Piece[] pieces) {
+        if (pieces == null || pieces.length != 9) {
+            throw new IllegalArgumentException("Pieces array must have exactly 9 elements.");
+        }
+        this.piece = pieces;
+    }
+
     public boolean checkPieces(int size) {
         int count = 0;
-        Piece[] pieces = getPiece();
-//        System.out.println(Arrays.deepToString(pieces));
 
-
-
-
-        for (int i = 0; i < 9; i++) {
-            if (pieces[i] != null) {
-                if (pieces[i].getSize() == size) {
-//                    System.out.println(count);
-                    count++;
+        for (Piece piece : piece) {
+            if (piece != null && piece.getSize() == size) {
+                count++;
+                if (count >= 3) {
+                    System.out.println(count);
+                    System.out.println("CHECK PIECE FALSE");
+                    return false;
                 }
             }
+        }
 
-        }
-        if (count < 3) {
-//            System.out.println("CHECK PIECE TRUE");
-            return true;
-        } else {
-//            System.out.println("CHECK PIECE FALSE");
-            return false;
-        }
+        System.out.println(count);
+        System.out.println("CHECK PIECE TRUE");
+        return true;
     }
 }

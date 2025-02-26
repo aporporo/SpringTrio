@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Otrio Game</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <style>
         html, body {
             height: 100%;
@@ -105,6 +107,7 @@
         .green { border-color: green; }
         .red { border-color: red; }
         .yellow { border-color: yellow; }
+        .black { border-color: black; }
 
         .pieces-container {
             display: flex;
@@ -184,6 +187,11 @@
         .sidebar h3 {
             margin-top: 0;
         }
+
+        .hidden {
+            display:none
+        }
+
     </style>
 </head>
 <body>
@@ -263,15 +271,51 @@
             </div>
 
             <div class="board" id="board">
-                <div class="cell" data-position="0"></div>
-                <div class="cell" data-position="1"></div>
-                <div class="cell" data-position="2"></div>
-                <div class="cell" data-position="3"></div>
-                <div class="cell" data-position="4"></div>
-                <div class="cell" data-position="5"></div>
-                <div class="cell" data-position="6"></div>
-                <div class="cell" data-position="7"></div>
-                <div class="cell" data-position="8"></div>
+                <div class="cell" data-position="0">
+                    <div class="piece large black" id="board-large-0"></div>
+                    <div class="piece medium black" id="board-medium-0"></div>
+                    <div class="piece small black" id="board-small-0"></div>
+                </div>
+                <div class="cell" data-position="1">
+                    <div class="piece large black" id="board-large-1"></div>
+                    <div class="piece medium black" id="board-medium-1"></div>
+                    <div class="piece small black" id="board-small-1"></div>
+                </div>
+                <div class="cell" data-position="2">
+                    <div class="piece large black" id="board-large-2"></div>
+                    <div class="piece medium black" id="board-medium-2"></div>
+                    <div class="piece small black" id="board-small-2"></div>
+                </div>
+                <div class="cell" data-position="3">
+                    <div class="piece large black" id="board-large-3"></div>
+                    <div class="piece medium black" id="board-medium-3"></div>
+                    <div class="piece small black" id="board-small-3"></div>
+                </div>
+                <div class="cell" data-position="4">
+                    <div class="piece large black" id="board-large-4"></div>
+                    <div class="piece medium black" id="board-medium-4"></div>
+                    <div class="piece small black" id="board-small-4"></div>
+                </div>
+                <div class="cell" data-position="5">
+                    <div class="piece large black" id="board-large-5"></div>
+                    <div class="piece medium black" id="board-medium-5"></div>
+                    <div class="piece small black" id="board-small-5"></div>
+                </div>
+                <div class="cell" data-position="6">
+                    <div class="piece large black" id="board-large-6"></div>
+                    <div class="piece medium black" id="board-medium-6"></div>
+                    <div class="piece small black" id="board-small-6"></div>
+                </div>
+                <div class="cell" data-position="7">
+                    <div class="piece large black" id="board-large-7"></div>
+                    <div class="piece medium black" id="board-medium-7"></div>
+                    <div class="piece small black" id="board-small-7"></div>
+                </div>
+                <div class="cell" data-position="8">
+                    <div class="piece large black" id="board-large-8"></div>
+                    <div class="piece medium black" id="board-medium-8"></div>
+                    <div class="piece small black" id="board-small-8"></div>
+                </div>
             </div>
 
             <div class="red-pieces-container">
@@ -313,286 +357,36 @@
         </div>
     </div>
     <div class="sidebar">
-        <h3>Rules</h3>
-        <ul>
-            <li>Win by 3 concentric pieces in any one space</li>
-            <li>Win by 3 of the same size in any direction</li>
-            <li>Win by 3 pieces in ascending or descending order</li>
-        </ul>
+<!--        <h3>Rules</h3>-->
+<!--        <ul>-->
+<!--            <li>Win by 3 concentric pieces in any one space</li>-->
+<!--            <li>Win by 3 of the same size in any direction</li>-->
+<!--            <li>Win by 3 pieces in ascending or descending order</li>-->
+<!--        </ul>-->
+        <div class="login_form">
+            <form action="#">
+
+                <div class="input_box">
+                    <label for="login">Username</label>
+                    <input type="text" id="login" placeholder="Enter username" required />
+                </div>
+                <div class="input_box">
+                    <label for="game_id">Game ID</label>
+                    <input type="text" id="game_id" placeholder="Enter Game ID" required />
+                </div>
+                <button onclick="create_game()">Create a game</button>
+                <button onclick="connectToSpecificGame()">Join a game</button>
+                <button onclick="connectToRandom()">Join a random game</button>
+            </form>
+        </div>
     </div>
 </div>
 
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="js/script.js"></script>
+<script src="js/socket_js.js"></script>
 
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const board = document.getElementById('board');
-        const pieces = document.querySelectorAll('.piece');
-        const scoreboard = {
-            blue: 0,
-            red: 0,
-            green: 0,
-            yellow: 0
-        };
-        let currentTurn = 'blue'; // Track whose turn it is
-
-        // Function to update the scoreboard
-        function updateScoreboard(player) {
-            if (scoreboard.hasOwnProperty(player)) {
-                scoreboard[player]++;
-                document.getElementById(`${player}-score`).innerText = scoreboard[player];  // Assuming you have elements for displaying scores
-            }
-        }
-
-        async function checkWinAndUpdateScore() {
-            try {
-                const response = await fetch('/game/checkWin');
-                const winner = await response.text();
-
-                if (winner) {
-                    if (winner === "blue") {
-                        updateScoreboard("blue");
-                    } else if (winner === "red") {
-                        updateScoreboard("red");
-                    } else if (winner === "green") {
-                        updateScoreboard("green");
-                    } else if (winner === "yellow") {
-                        updateScoreboard("yellow");
-                    }
-                    alert(`${winner} player has won!`);
-                    await resetGame();
-                } else {
-                    console.log("No winner yet");
-                }
-            } catch (error) {
-                console.error("Error fetching winner:", error);
-            }
-        }
-
-        async function resetGame() {
-            try {
-                // Call the backend to reset the game state
-                const response = await fetch('/game/reset', {
-                    method: 'POST',
-                });
-
-                if (response.ok) {
-                    console.log('Game has been reset on the server.');
-
-                    // // Clear all cells on the game board
-                    // document.querySelectorAll('.cell').forEach(cell => {
-                    //     cell.innerHTML = '';  // Clear the cell content
-                    // });
-
-                    // Reset the pieces to their original positions
-                    resetPieces();
-
-
-
-                    console.log('Game has been reset on the frontend.');
-                } else {
-                    console.error('Failed to reset the game on the server.');
-                }
-            } catch (error) {
-                console.error('Error resetting the game:', error);
-            }
-        }
-
-        function resetPieces() {
-            Object.keys(originalPositions).forEach(pieceId => {
-                const piece = document.getElementById(pieceId);
-                const originalPosition = originalPositions[pieceId];
-                const originalCell = originalPosition.cell;
-
-                // Remove the piece from its current parent (if moved)
-                if (piece.parentNode) {
-                    piece.parentNode.removeChild(piece);
-                }
-
-                // Append the piece back to its original cell
-                if (originalCell) {
-                    originalCell.appendChild(piece);
-                }
-
-                // Reset any styles (like position) if necessary
-                piece.style.left = '';
-                piece.style.top = '';
-            });
-
-            console.log('All pieces have been reset.');
-        }
-
-        // Track original positions
-        const originalPositions = {};
-
-        // Add dragstart event for all pieces
-        pieces.forEach(piece => {
-            piece.addEventListener('dragstart', (e) => {
-                const pieceId = e.target.id;
-                const parentCell = e.target.closest('.cell');
-
-                // Store the original position
-                if (parentCell) {
-                    const originalPosition = parentCell.dataset.position;
-                    originalPositions[pieceId] = {
-                        cell: parentCell,
-                        position: originalPosition
-                    };
-                    console.log('Original position stored:', pieceId, originalPosition);
-                } else {
-                    console.warn('Parent cell not found for piece:', pieceId);
-                }
-
-                console.log('Dragging piece:', pieceId);
-                e.dataTransfer.setData('piece-id', pieceId);
-                e.dataTransfer.effectAllowed = 'move';
-            });
-        });
-
-        // Allow drop on the board
-        board.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-        });
-
-        // Handle the drop event
-        board.addEventListener('drop', async (e) => {
-            e.preventDefault();
-
-            const pieceId = e.dataTransfer.getData('piece-id');
-            const cell = e.target.closest('.cell'); // Drop target
-
-            if (cell && pieceId) {
-                const piece = document.getElementById(pieceId);
-
-                if (piece) {
-                    console.log('Dropped piece:', pieceId, 'on cell:', cell);
-
-                    // Clone the piece to allow reuse (optional, based on your game logic)
-                    const clonedPiece = piece.cloneNode(true);
-
-                    // Place the piece in the new cell
-                    cell.appendChild(clonedPiece);
-                    // Center the piece in its new cell
-                    centerPiece(clonedPiece, cell);
-
-                    // Temporarily remove the original piece from its parent container
-                    piece.parentElement.removeChild(piece);
-
-                    console.log('Removed original piece:', pieceId);
-
-                    // Extract color and size data
-                    const color = piece.classList.contains('blue') ? 'blue' :
-                        piece.classList.contains('green') ? 'green' :
-                            piece.classList.contains('red') ? 'red' :
-                                piece.classList.contains('yellow') ? 'yellow' : 'unknown';
-
-                    const size = piece.classList.contains('large') ? 2 :
-                        piece.classList.contains('medium') ? 1 :
-                            piece.classList.contains('small') ? 0 : 'unknown';
-
-                    // Extract row and column from cell's dataset
-                    const col = cell.dataset.position % 3;
-                    const row = Math.floor(cell.dataset.position / 3);
-
-                    try {
-                        const response = await fetch('/game/move', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            body: new URLSearchParams({
-                                row: row,
-                                col: col,
-                                color: color,
-                                size: size
-                            })
-                        });
-
-                        const result = await response.json();
-                        console.log('Move result:', result);
-                        checkWinAndUpdateScore();
-                        // const winResponse = fetch('/game/checkWin');
-                        // const winner = response.text();
-                        // if (winner != null) {
-                        //     if (winner === "blue") {
-                        //         updateScoreboard("blue");
-                        //
-                        //     } else if (winner === "red") {
-                        //         updateScoreboard("red");
-                        //     } else if (winner === "green") {
-                        //         updateScoreboard("green");
-                        //     } else if (winner === "yellow") {
-                        //         updateScoreboard("yellow");
-                        //     }
-                        //     alert(`${winner} player has won!`);
-                        // } else {
-                        //     console.log("No winner yet");
-                        // }
-
-                        // Optionally update the UI based on the result
-                        if (!result) {
-                            console.warn('Move failed!');
-
-                            // Move the piece back to its original position
-                            const originalPositionData = originalPositions[pieceId];
-                            if (originalPositionData) {
-                                const { cell: originalCell, position } = originalPositionData;
-                                if (originalCell) {
-                                    console.log('Moving piece back to:', originalCell);
-
-                                    // Insert the piece back into the original cell
-                                    originalCell.appendChild(piece);
-                                    // Center the piece in its original cell
-                                    centerPiece(piece, originalCell);
-
-                                    // Remove the piece from the current cell
-                                    cell.removeChild(clonedPiece);
-                                } else {
-                                    console.warn('Original cell not found with position:', position);
-                                }
-                            } else {
-                                console.warn('Original position not found for piece:', pieceId);
-                            }
-                        }
-                    } catch (error) {
-                        console.error('Error making move:', error);
-
-                        // Move the piece back to its original position
-                        const originalPositionData = originalPositions[pieceId];
-                        if (originalPositionData) {
-                            const { cell: originalCell, position } = originalPositionData;
-                            if (originalCell) {
-                                console.log('Moving piece back to:', originalCell);
-
-                                // Insert the piece back into the original cell
-                                originalCell.appendChild(piece);
-                                // Center the piece in its original cell
-                                centerPiece(piece, originalCell);
-
-                                // Remove the piece from the current cell
-                                cell.removeChild(clonedPiece);
-                            } else {
-                                console.warn('Original cell not found with position:', position);
-                            }
-                        } else {
-                            console.warn('Original position not found for piece:', pieceId);
-                        }
-                    }
-                } else {
-                    console.warn('Piece not found with ID:', pieceId);
-                }
-            }
-        });
-
-        function centerPiece(piece, cell) {
-            piece.style.position = 'absolute';
-            piece.style.top = '50%';
-            piece.style.left = '50%';
-            piece.style.transform = 'translate(-50%, -50%)';
-        }
-    });
-</script>
 
 </body>
 </html>

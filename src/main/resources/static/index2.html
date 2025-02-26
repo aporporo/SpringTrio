@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otrio Game</title>
+    <style>
+        /* Import Google Fonts */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap');
+
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end; /* Align content to the right */
+            background-color: #f5f5f5; /* Background color behind the image */
+            background-image: url('https://otrio.com/cdn/shop/products/BRP-Otrio-Bamboo-_14_-Edited_1600x.png?v=1644262491');
+            background-repeat: no-repeat;
+            background-size: 50%; /* Adjust size of the image (smaller percentage means smaller image) */
+            background-position: left center; /* Position the image on the left-center of the viewport */
+        }
+
+        .login_form {
+            width: 100%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.9); /* Semi-transparent background */
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            margin: 20px;
+        }
+
+        .login_form h3 {
+            font-size: 24px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        form .input_box {
+            margin-bottom: 20px;
+        }
+
+        form .input_box label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        form .input_box input {
+            width: 100%;
+            height: 50px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        form .input_box input:focus {
+            border-color: #626cd6;
+        }
+
+        form button {
+            width: 100%;
+            height: 50px;
+            background-color: #626cd6;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        form button:hover {
+            background-color: #4954d0;
+        }
+    </style>
+</head>
+<body>
+<div class="login_form">
+    <form action="#">
+        <h3>Welcome to Otrio!</h3>
+        <div class="input_box">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter username" required />
+        </div>
+        <div class="input_box">
+            <label for="gameid">Game ID</label>
+            <input type="text" id="gameid" placeholder="Enter Game ID" required />
+        </div>
+        <button type="submit">Create a game</button>
+        <button type="submit">Join a game</button>
+        <button type="submit">Join a random game</button>
+    </form>
+</div>
+</body>
+</html>
