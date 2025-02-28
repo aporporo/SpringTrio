@@ -7,10 +7,12 @@ public class Board {
     public int gameWon = 0;
     public String winnerColor;
 
+    // makes the 3x3x3 board
     public Board() {
         board = new Piece[3][3][3];
         reset();
     }
+
 
     public void reset() {
         gameWon = 0;
@@ -24,21 +26,26 @@ public class Board {
         }
     }
 
+    // This will place a piece on the board if the conditions are met
     public boolean placePiece(int row, int col, int size, Player player) {
+        // Checks if the game is already won or if the position is invalid
         if (gameWon == 1 || row < 0 || row >= 3 || col < 0 || col >= 3 || size < 0 || size >= 3) {
             return false;
         }
 
+        // Checks if there is a piece already placed in the position of this new piece
         Piece existingPiece = board[row][col][size];
         if (existingPiece != null) {
             return false;
         }
 
+        // Checks if the player has available pieces of the given size
         if (!player.checkPieces(size)) {
             System.out.println("Too many pieces of size " + size);
             return false;
         }
 
+        // Checks if user has used all of their pieces
         int count = 0;
         while (player.piece[count] != null) {
             count++;
@@ -48,12 +55,15 @@ public class Board {
             }
         }
 
+        // Adds the piece to the players list of used pieces
         player.piece[count] = new Piece(player.color, size);
         System.out.println("Piece added to player");
 
+        // Adds the piece to the board
         board[row][col][size] = player.piece[count];
         System.out.println("Piece added to board");
 
+        // Calls the checkWin method to see if the player has met a winning condition
         if (checkWin(player)) {
             gameWon = 1;
             winnerColor = player.color;
@@ -63,17 +73,30 @@ public class Board {
         return true;
     }
 
+    /*
+     * Checks if the player has met a winning condition by calling helper functions to check rows, columns, diagonals,
+     * or stacked winning combinations
+    */
     public boolean checkWin(Player player) {
         return checkRows(player) || checkColumns(player) || checkDiagonals(player) || checkStackedWin(player);
     }
 
+    /*
+    * Checks if the player has a winning combination in a row
+    * This can be 3 pieces of the same size in a row or pieces in ascending or descending order by size in a row
+    * */
     private boolean checkRows(Player player) {
+        // iterate through each row
         for (int row = 0; row < 3; row++) {
+            // variables to track column positions of players pieces for diff sizes
             int size1Col = -1, size2Col = -1, size3Col = -1;
             int size1Col2 = -2, size2Col2 = -2, size3Col2 = -2;
             int size1Col3 = -3, size2Col3 = -3, size3Col3 = -3;
 
+            // iterate through each column in the current row
             for (int col = 0; col < 3; col++) {
+
+                // check if player has placed a small piece in this row
                 if (board[row][col][0] != null && board[row][col][0].getColor().equals(player.color)) {
                     if (size1Col == -1) {
                         size1Col = col;
@@ -83,6 +106,8 @@ public class Board {
                         size1Col3 = col;
                     }
                 }
+
+                // check if player has placed a medium piece
                 if (board[row][col][1] != null && board[row][col][1].getColor().equals(player.color)) {
                     if (size2Col == -1) {
                         size2Col = col;
@@ -93,6 +118,8 @@ public class Board {
                     }
 
                 }
+
+                // check if player placed a large piece
                 if (board[row][col][2] != null && board[row][col][2].getColor().equals(player.color)) {
                     if (size3Col == -1) {
                         size3Col = col;
@@ -104,6 +131,7 @@ public class Board {
                 }
             }
 
+            // check if the row contains a winning combination
             if (size1Col == 0 && size2Col == 1 && size3Col == 2) {
                 System.out.println("Acesnd");
                 return true;
@@ -125,8 +153,10 @@ public class Board {
     }
 
 
-
-
+    /*
+     * checks if player has a winning combo in any column
+     * logic is the same as checkRows but will check vertically
+     */
     private boolean checkColumns(Player player) {
         for (int col = 0; col < 3; col++) {
             int size1Row = -1, size2Row = -1, size3Row = -1;
@@ -184,11 +214,17 @@ public class Board {
         return false;
     }
 
+    /*
+     * checks if player has a winning diagonal combination
+     * same idea as checkRows and checkColumns, a winning combo can be 3 pieces of same size or pieces is ascending
+     * or descending order in a diagonal
+     */
     private boolean checkDiagonals(Player player) {
         int size1Index = -1, size2Index = -1, size3Index = -1;
         int size1Index2 = -2, size2Index2 = -2, size3Index2 = -2;
         int size1Index3 = -3, size2Index3 = -3, size3Index3 = -3;
 
+        // this will check the main diagonal, top left to bottom right
         for (int i = 0; i < 3; i++) {
             if (board[i][i][0] != null && board[i][i][0].getColor().equals(player.color)) {
                 if (size1Index == -1) {
@@ -228,6 +264,7 @@ public class Board {
             return true;
         }
 
+        // resets the variables and begins to check the other diagonal, bottom left to top right
         size1Index = -1; size2Index = -1; size3Index = -1;
         size1Index2 = -2; size2Index2 = -2; size3Index2 = -2;
         size1Index3 = -3; size2Index3 = -3; size3Index3 = -3;
@@ -273,6 +310,10 @@ public class Board {
         return false;
     }
 
+    /*
+     * Checks if player has stacked all three sizes in a single spot on the board
+     * 1 small, 1 medium, 1 large piece of the same colour in the same spot would be a winning combo
+     */
     private boolean checkStackedWin(Player player) {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
