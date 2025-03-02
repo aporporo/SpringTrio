@@ -174,6 +174,19 @@ document.addEventListener('DOMContentLoaded', function () {
             if (piece) {
                 console.log('Dropped piece:', pieceId, 'on cell:', cell);
 
+                const playerPieceId = piece.classList.contains('blue') ? 1 :
+                    piece.classList.contains('red') ? 2 :
+                        piece.classList.contains('green') ? 3 :
+                            piece.classList.contains('yellow') ? 4 : 'unknown';
+
+// Ensure player is moving their own piece
+                if (playerPieceId !== playerId) {
+                    alert("You can only move your own pieces!");
+                    movePieceBackToOriginalPosition(pieceId, piece, cell);
+                    return;
+                }
+
+
                 // Remove the piece from its previous parent
                 if (piece.parentElement) {
                     piece.classList.add("hidden");
