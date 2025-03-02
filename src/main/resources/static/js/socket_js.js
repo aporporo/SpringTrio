@@ -2,6 +2,7 @@ const url = 'http://localhost:8080';
 let stompClient;
 let gameId;
 let playerType;
+let playerId;
 
 function connectToSocket(gameId) {
 
@@ -17,6 +18,7 @@ function connectToSocket(gameId) {
             let data = JSON.parse(response.body);
             console.log(data);
             updateBoard(data);
+
         })
 
         // Subscribe to game reset events
@@ -54,6 +56,8 @@ function create_game() {
                 // reset();
                 connectToSocket("1");
                 alert("Your created a game. Game id is: " + data.gameId);
+                playerId = 1;
+                console.log(`Current Player ID set to: ${playerId}`)
                 gameOn = true;
             },
             error: function (error) {
@@ -115,6 +119,15 @@ function connectToSpecificGame() {
                 // reset();
                 connectToSocket(gameId);
                 alert("Congrats you're playing with: " + data.player1.playerName);
+
+                // find the player object that matches the current player name
+                for (let key of ["player1", "player2", "player3", "player4"]) {
+                    if (data[key] && data[key].playerName == login) {
+                        playerId = data[key].playerId;
+                        console.log(`Current Player ID set to: ${playerId}`)
+                        break;
+                    }
+                }
             },
             error: function (error) {
                 console.log(error);

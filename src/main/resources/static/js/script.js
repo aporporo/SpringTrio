@@ -188,10 +188,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log('Piece placed in cell:', cell);
 
                 // Extract player and size information from the piece's classes
-                const playerId = piece.classList.contains('blue') ? 1 :
-                    piece.classList.contains('red') ? 2 :
-                        piece.classList.contains('green') ? 3 :
-                            piece.classList.contains('yellow') ? 4 : 'unknown';
+                // const playerId = piece.classList.contains('blue') ? 1 :
+                //     piece.classList.contains('red') ? 2 :
+                //         piece.classList.contains('green') ? 3 :
+                //             piece.classList.contains('yellow') ? 4 : 'unknown';
 
                 const size = piece.classList.contains('large') ? 2 :
                     piece.classList.contains('medium') ? 1 :
