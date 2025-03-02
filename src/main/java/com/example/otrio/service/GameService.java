@@ -114,7 +114,7 @@ public class GameService {
         Game game = GameStorage.getInstance().getGames().get(gameId);
 
 
-        if (game.getBoard().placePiece(row, col, size, player)) {
+        if (player.getPlayerId() == playerTurn && game.getBoard().placePiece(row, col, size, player)) {
             game.setLastMove(new String[]{
                     String.valueOf(row), String.valueOf(col), String.valueOf(size), player.color
             });
