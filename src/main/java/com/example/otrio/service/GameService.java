@@ -99,6 +99,19 @@ public class GameService {
         game.resetPieces(game.getPlayer2());
         game.resetPieces(game.getPlayer3());
         game.resetPieces(game.getPlayer4());
+        if (winner.equals("blue")) {
+            game.setCurrentTurn(1);
+            System.out.println("reset turn to 1");
+        } else if (winner.equals("red")) {
+            game.setCurrentTurn(2);
+            System.out.println("reset turn to 2");
+        } else if (winner.equals("green")) {
+            game.setCurrentTurn(3);
+            System.out.println("reset turn to 3");
+        } else if (winner.equals("yellow")) {
+            game.setCurrentTurn(4);
+            System.out.println("reset turn to 4");
+        }
 
         System.out.println("reset test: winner" + this.winner);
         

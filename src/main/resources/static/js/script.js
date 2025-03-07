@@ -108,19 +108,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     function updateBoard(data) {
         const board = data.board.board;
+        const playerTurn = data.currentTurn;
 
         const player1Score = data.player1 ? data.player1.wins : 0;
         const player2Score = data.player2 ? data.player2.wins : 0;
         const player3Score = data.player3 ? data.player3.wins : 0;
         const player4Score = data.player4 ? data.player4.wins : 0;
 
+        advanceTurn(playerTurn);
 
 
             document.getElementById(`blue-score`).innerText = player1Score;
             document.getElementById(`red-score`).innerText = player2Score;
             document.getElementById(`green-score`).innerText = player3Score;
             document.getElementById(`yellow-score`).innerText = player4Score;
-
 
 
         board.forEach((row, rowIndex) => {
@@ -250,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const result = await response.json();
                     // displayResponse(result);
                     updateBoard(result);
-                    advanceTurn();
+                    // advanceTurn();
                     console.log('Move result:', result);
 
                     // Broadcast the move to other players via WebSocket
@@ -322,11 +323,10 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
 // Function to advance to the next player's turn
-    function advanceTurn() {
+    function advanceTurn(playerTurn) {
         const players = ['blue', 'red', 'green', 'yellow'];
-        const currentIndex = players.indexOf(currentTurn);
-        const nextIndex = (currentIndex + 1) % players.length;
-        currentTurn = players[nextIndex];
+        const index = playerTurn - 1;
+        currentTurn = players[index];
         updateTurnIndicator();
     }
 
