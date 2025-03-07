@@ -68,6 +68,7 @@ public class Board {
             gameWon = 1;
             winnerColor = player.color;
             System.out.println(player.color + " HAS WON");
+            player.playerWon();
         }
 
         return true;

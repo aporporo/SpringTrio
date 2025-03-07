@@ -13,6 +13,7 @@ public class Game {
     private GameStatus status;
     private String winner;
     private String[] lastMove;
+    private int currentTurn;
 
     public void resetPieces(Player player) {
         if (player != null) {

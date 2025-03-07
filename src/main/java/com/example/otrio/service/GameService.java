@@ -45,6 +45,7 @@ public class GameService {
         game.setGameId(gameId);
         game.setPlayer1(player);
         game.setStatus(NEW);
+        game.setCurrentTurn(1);
         GameStorage.getInstance().setGame(game);
     }
 
@@ -114,7 +115,7 @@ public class GameService {
         Game game = GameStorage.getInstance().getGames().get(gameId);
 
 
-        if (player.getPlayerId() == playerTurn && game.getBoard().placePiece(row, col, size, player)) {
+        if (player.getPlayerId() == game.getCurrentTurn() && game.getBoard().placePiece(row, col, size, player)) {
             game.setLastMove(new String[]{
                     String.valueOf(row), String.valueOf(col), String.valueOf(size), player.color
             });
@@ -124,10 +125,12 @@ public class GameService {
                 //game.setBoard(new Board());
             }
 
-            if (playerTurn == 4) {
+            if (game.getCurrentTurn() == 4) {
                 playerTurn = 1;
+                game.setCurrentTurn(playerTurn);
             } else {
                 playerTurn++;
+                game.setCurrentTurn(playerTurn);
             }
         } else {
             throw new InvalidGameException("Error in gameMove method");

@@ -74,10 +74,12 @@ document.addEventListener('DOMContentLoaded', function () {
     // Function to update the scoreboard
     function updateScoreboard(player) {
         if (scoreboard.hasOwnProperty(player)) {
-            scoreboard[player]++;
+
             document.getElementById(`${player}-score`).innerText = scoreboard[player];  // Assuming you have elements for displaying scores
         }
     }
+
+
 
     async function checkWinAndUpdateScore() {
         try {
@@ -106,6 +108,20 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     function updateBoard(data) {
         const board = data.board.board;
+
+        const player1Score = data.player1 ? data.player1.wins : 0;
+        const player2Score = data.player2 ? data.player2.wins : 0;
+        const player3Score = data.player3 ? data.player3.wins : 0;
+        const player4Score = data.player4 ? data.player4.wins : 0;
+
+
+
+            document.getElementById(`blue-score`).innerText = player1Score;
+            document.getElementById(`red-score`).innerText = player2Score;
+            document.getElementById(`green-score`).innerText = player3Score;
+            document.getElementById(`yellow-score`).innerText = player4Score;
+
+
 
         board.forEach((row, rowIndex) => {
             row.forEach((col, colIndex) => {

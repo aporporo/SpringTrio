@@ -4,6 +4,7 @@ public class Player {
     public Piece[] piece;
     public String playerName;
     public String color;
+    public int wins;
 
     public int getPlayerId() {
         return playerId;
@@ -20,6 +21,7 @@ public class Player {
         this.color = color;
         this.piece = new Piece[9];
         this.playerId = playerId;
+        wins = 0;
     }
 
     public void printPiece() {
@@ -53,6 +55,10 @@ public class Player {
 
     public Piece[] getPiece() {
         return piece;
+    }
+
+    public void playerWon() {
+        wins += 1;
     }
 
     public void setPieces(Piece[] pieces) {
