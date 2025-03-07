@@ -7,47 +7,104 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.4.0/sockjs.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+        /* Retro Arcade Style */
         html, body {
             height: 100%;
             margin: 0;
+            background-color: #0a0a20;
+            color: #33ff66;
+            font-family: 'Press Start 2P', cursive;
+            overflow: hidden;
+            background-image:
+                    linear-gradient(to right, rgba(20, 0, 80, 0.1) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(20, 0, 80, 0.1) 1px, transparent 1px);
+            background-size: 40px 40px;
+            background-position: center;
         }
 
         body {
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: lightgrey;
+            box-shadow: inset 0 0 150px rgba(77, 0, 153, 0.6);
         }
+
+        /* Scanline Effect */
+        body:before {
+            content: "";
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px;
+            z-index: 1000;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
         header {
-            position: absolute; /* Position it absolutely to keep it on top */
+            position: absolute;
             top: 0;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 10; /* Ensure it is on top of other content */
+            z-index: 10;
             text-align: center;
             width: 100%;
-            padding: 10px;
-            gap: 10px;
+            padding: 15px;
+            background-color: rgba(10, 10, 32, 0.8);
+            border-bottom: 3px solid #33ff66;
+            text-shadow: 0 0 10px #33ff66, 0 0 20px #33ff66;
+            box-shadow: 0 0 15px #33ff66;
+        }
 
+        h1 {
+            font-size: 2.2em;
+            letter-spacing: 2px;
+            margin: 0;
+            animation: pulse 1.5s infinite alternate;
+        }
+
+        @keyframes pulse {
+            from { text-shadow: 0 0 10px #33ff66, 0 0 20px #33ff66; }
+            to { text-shadow: 0 0 15px #33ff66, 0 0 30px #33ff66, 0 0 40px #33ff66; }
         }
 
         .container {
             display: flex;
             align-items: center;
-            gap: 20px; /* Space between game area and sidebar */
+            gap: 20px;
+            padding: 20px;
+            background-color: rgba(30, 30, 50, 0.8);
+            border: 8px solid #444;
+            border-radius: 10px;
+            box-shadow:
+                    0 0 0 4px #222,
+                    0 0 0 8px #111,
+                    0 5px 15px rgba(0, 0, 0, 0.7),
+                    inset 0 0 30px rgba(0, 0, 255, 0.4);
+            margin-top: 40px;
         }
 
         .game-area {
             display: flex;
             flex-direction: column;
             align-items: center;
+            padding: 15px;
+            background-color: #111122;
+            border: 3px solid #33ff66;
+            border-radius: 5px;
+            box-shadow: 0 0 15px #33ff66;
         }
 
         .game-container {
             display: flex;
             flex-direction: row;
             align-items: center;
-            gap: 20px; /* Space between different pieces containers */
+            gap: 20px;
         }
 
         .board {
@@ -55,22 +112,30 @@
             grid-template-columns: repeat(3, 100px);
             grid-template-rows: repeat(3, 100px);
             gap: 5px;
-            background-color: #fff;
-            border: 2px solid #000;
+            background-color: #222244;
+            border: 4px solid #ff00cc;
             padding: 5px;
             position: relative;
+            box-shadow: 0 0 15px #ff00cc;
+            transform: perspective(500px) rotateX(5deg);
         }
 
         .cell {
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #e0e0e0;
-            border: 1px solid #ccc;
+            background-color: #0a0a20;
+            border: 2px solid #666;
             width: 100px;
             height: 100px;
             position: relative;
             overflow: hidden;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.8);
+            transition: all 0.2s ease;
+        }
+
+        .cell:hover {
+            box-shadow: inset 0 0 15px #33ff66;
         }
 
         .piece {
@@ -83,6 +148,13 @@
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 1;
+            transition: all 0.2s ease;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .piece:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            filter: brightness(1.2);
         }
 
         .piece.large {
@@ -103,16 +175,43 @@
             z-index: 3;
         }
 
-        .blue { border-color: blue; }
-        .green { border-color: green; }
-        .red { border-color: red; }
-        .yellow { border-color: yellow; }
-        .black { border-color: black; }
+        .blue {
+            border-color: #00ffff;
+            box-shadow: 0 0 10px #00ffff, inset 0 0 5px #00ffff;
+        }
+
+        .green {
+            border-color: #33ff66;
+            box-shadow: 0 0 10px #33ff66, inset 0 0 5px #33ff66;
+        }
+
+        .red {
+            border-color: #ff3366;
+            box-shadow: 0 0 10px #ff3366, inset 0 0 5px #ff3366;
+        }
+
+        .yellow {
+            border-color: #ffff00;
+            box-shadow: 0 0 10px #ffff00, inset 0 0 5px #ffff00;
+        }
+
+        .black {
+            border-color: #333;
+            box-shadow: none;
+        }
 
         .pieces-container {
             display: flex;
             flex-direction: column;
             align-items: center;
+        }
+
+        .yellow-pieces-container, .red-pieces-container, .blue-pieces-container, .green-pieces-container {
+            background-color: rgba(20, 20, 40, 0.8);
+            border: 2px solid #666;
+            padding: 5px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
         }
 
         .yellow-pieces-container, .red-pieces-container {
@@ -134,101 +233,163 @@
         }
 
         .scoreboard {
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
-
-        .scoreboard table {
+            font-size: 0.8em;
+            margin-bottom: 20px;
+            background-color: #111122;
+            padding: 15px;
+            border: 3px solid #ffff00;
+            border-radius: 5px;
+            box-shadow: 0 0 15px #ffff00;
             width: 100%;
-            border-collapse: collapse;
         }
 
-        .scoreboard th, .scoreboard td {
-            padding: 10px;
-            border: 1px solid #ddd;
+        .scoreboard p {
+            margin: 10px 0;
+            text-shadow: 0 0 5px currentColor;
+            display: flex;
+            justify-content: space-between;
         }
 
-        .scoreboard th {
-            text-align: left;
+        #blue-score, #red-score, #green-score, #yellow-score {
+            font-size: 1.2em;
+            text-shadow: 0 0 5px currentColor;
         }
 
-        .scoreboard td.player {
-            text-align: left;
-        }
-
-        .scoreboard td.score {
-            text-align: right;
-        }
+        #blue-score { color: #00ffff; }
+        #red-score { color: #ff3366; }
+        #green-score { color: #33ff66; }
+        #yellow-score { color: #ffff00; }
 
         .reset-button {
-            font-size: 1em;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.8em;
+            padding: 15px;
+            background-color: #ff3366;
+            color: white;
             border: none;
             border-radius: 5px;
             cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            box-shadow:
+                    0 0 15px #ff3366,
+                    0 5px 0 #cc0033;
+            transition: all 0.1s ease;
+            text-shadow: 0 2px 2px rgba(0, 0, 0, 0.5);
         }
 
         .reset-button:hover {
-            background-color: #0056b3;
+            background-color: #ff5588;
+            box-shadow:
+                    0 0 20px #ff3366,
+                    0 5px 0 #cc0033;
+            transform: translateY(-2px);
+        }
+
+        .reset-button:active {
+            transform: translateY(3px);
+            box-shadow:
+                    0 0 15px #ff3366,
+                    0 2px 0 #cc0033;
         }
 
         .sidebar {
-            width: 200px; /* Fixed width for both sidebars */
+            width: 200px;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
-            gap: 10px;
+            align-items: center;
+            gap: 20px;
             padding: 20px;
-
-        }
-
-        .sidebar h3 {
-            margin-top: 0;
+            background-color: #111122;
+            border: 3px solid #00ffff;
+            border-radius: 5px;
+            box-shadow: 0 0 15px #00ffff;
         }
 
         .hidden {
-            display:none
+            display: none;
         }
 
+        .login_form {
+            width: 100%;
+        }
+
+        .input_box {
+            margin-bottom: 15px;
+        }
+
+        .input_box label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.7em;
+            color: #ffff00;
+        }
+
+        .input_box input {
+            width: 100%;
+            padding: 8px;
+            background-color: #222244;
+            border: 2px solid #33ff66;
+            color: #33ff66;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7em;
+            margin-bottom: 5px;
+        }
+
+        .login_form button {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 0.7em;
+            padding: 10px;
+            background-color: #33ff66;
+            color: #111122;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 5px;
+            width: 100%;
+            text-transform: uppercase;
+            box-shadow: 0 4px 0 #119944;
+            transition: all 0.1s ease;
+        }
+
+        .login_form button:hover {
+            background-color: #66ff99;
+            transform: translateY(-2px);
+        }
+
+        .login_form button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #119944;
+        }
+
+        /* Custom retro arcade screen effect */
+        .arcade-screen-effect {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                    radial-gradient(ellipse at center, transparent 0%, rgba(10, 10, 32, 0.7) 100%);
+            pointer-events: none;
+            z-index: 999;
+        }
     </style>
 </head>
 <body>
+<div class="arcade-screen-effect"></div>
 <header>
-    <h1>Welcome to Otrio!</h1>
+    <h1>SPRINGTRIO ARCADE</h1>
 </header>
 <div class="container">
     <div class="sidebar">
         <div class="scoreboard" id="scoreboard">
-<!--            <table>-->
-<!--                <tr>-->
-<!--                    <th>Player</th>-->
-<!--                    <th>Score</th>-->
-<!--                </tr>-->
-<!--                <tr>-->
-<!--                    <td class="player">Blue</td>-->
-<!--                    <td class="score">Score</td>-->
-<!--                </tr>-->
-<!--                <tr>-->
-<!--                    <td class="player">Red</td>-->
-<!--                    <td class="score">Score</td>-->
-<!--                </tr>-->
-<!--                <tr>-->
-<!--                    <td class="player">Green</td>-->
-<!--                    <td class="score">Score</td>-->
-<!--                </tr>-->
-<!--                <tr>-->
-<!--                    <td class="player">Yellow</td>-->
-<!--                    <td class="score">Score</td>-->
-<!--                </tr>-->
-<!--            </table>-->
-            <p>Blue Score: <span id="blue-score">0</span></p>
-            <p>Red Score: <span id="red-score">0</span></p>
-            <p>Green Score: <span id="green-score">0</span></p>
-            <p>Yellow Score: <span id="yellow-score">0</span></p>
+            <p>BLUE: <span id="blue-score">0</span></p>
+            <p>RED: <span id="red-score">0</span></p>
+            <p>GREEN: <span id="green-score">0</span></p>
+            <p>YELLOW: <span id="yellow-score">0</span></p>
         </div>
-        <button class="reset-button" onclick="resetGame()">Reset Game</button>
+        <button class="reset-button" onclick="resetGame()">RESET GAME</button>
     </div>
     <div class="game-area">
         <div class="pieces-container">
@@ -353,40 +514,29 @@
                 <div class="piece medium green" id="green-medium-3" draggable="true"></div>
                 <div class="piece small green" id="green-small-3" draggable="true"></div>
             </div>
-
         </div>
     </div>
     <div class="sidebar">
-<!--        <h3>Rules</h3>-->
-<!--        <ul>-->
-<!--            <li>Win by 3 concentric pieces in any one space</li>-->
-<!--            <li>Win by 3 of the same size in any direction</li>-->
-<!--            <li>Win by 3 pieces in ascending or descending order</li>-->
-<!--        </ul>-->
         <div class="login_form">
             <form action="#">
-
                 <div class="input_box">
-                    <label for="login">Username</label>
-                    <input type="text" id="login" placeholder="Enter username" required />
+                    <label for="login">USERNAME</label>
+                    <input type="text" id="login" placeholder="ENTER USERNAME" required />
                 </div>
                 <div class="input_box">
-                    <label for="game_id">Game ID</label>
-                    <input type="text" id="game_id" placeholder="Enter Game ID" required />
+                    <label for="game_id">GAME ID</label>
+                    <input type="text" id="game_id" placeholder="ENTER GAME ID" required />
                 </div>
-                <button type="button" onclick="create_game()">Create a game</button>
-                <button type="button" onclick="connectToSpecificGame()">Join a game</button>
-                <button type="button" onclick="connectToRandom()">Join a random game</button>
+                <button type="button" onclick="create_game()">CREATE GAME</button>
+                <button type="button" onclick="connectToSpecificGame()">JOIN GAME</button>
+                <button type="button" onclick="connectToRandom()">RANDOM GAME</button>
             </form>
         </div>
     </div>
 </div>
 
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="js/script.js"></script>
 <script src="js/socket_js.js"></script>
-
-
 </body>
 </html>
