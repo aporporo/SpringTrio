@@ -374,6 +374,43 @@
             pointer-events: none;
             z-index: 999;
         }
+
+        .player-score {
+            margin: 10px 0;
+            text-shadow: 0 0 5px currentColor;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        .player-score.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 10px currentColor;
+        }
+
+        .turn-marker {
+            visibility: hidden;
+            margin-right: 10px;
+            font-size: 0.9em;
+            animation: blink 1s infinite;
+        }
+
+        .player-score.active .turn-marker {
+            visibility: visible;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        #blue-player { color: #00ffff; }
+        #red-player { color: #ff3366; }
+        #green-player { color: #33ff66; }
+        #yellow-player { color: #ffff00; }
     </style>
 </head>
 <body>
@@ -384,10 +421,10 @@
 <div class="container">
     <div class="sidebar">
         <div class="scoreboard" id="scoreboard">
-            <p>BLUE: <span id="blue-score">0</span></p>
-            <p>RED: <span id="red-score">0</span></p>
-            <p>GREEN: <span id="green-score">0</span></p>
-            <p>YELLOW: <span id="yellow-score">0</span></p>
+            <p class="player-score" id="blue-player"><span class="turn-marker">▶</span> BLUE: <span id="blue-score">0</span></p>
+            <p class="player-score" id="red-player"><span class="turn-marker">▶</span> RED: <span id="red-score">0</span></p>
+            <p class="player-score" id="green-player"><span class="turn-marker">▶</span> GREEN: <span id="green-score">0</span></p>
+            <p class="player-score" id="yellow-player"><span class="turn-marker">▶</span> YELLOW: <span id="yellow-score">0</span></p>
         </div>
         <button class="reset-button" onclick="resetGame()">RESET GAME</button>
     </div>

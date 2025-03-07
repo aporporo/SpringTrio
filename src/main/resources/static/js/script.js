@@ -68,7 +68,8 @@ document.addEventListener('DOMContentLoaded', function () {
         green: 0,
         yellow: 0
     };
-    let currentTurn = 'blue'; // Track whose turn it is
+    let currentTurn = 'blue'; // Start with blue player
+    updateTurnIndicator();
 
     // Function to update the scoreboard
     function updateScoreboard(player) {
@@ -233,6 +234,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     const result = await response.json();
                     // displayResponse(result);
                     updateBoard(result);
+                    advanceTurn();
                     console.log('Move result:', result);
 
                     // Broadcast the move to other players via WebSocket
@@ -286,6 +288,30 @@ document.addEventListener('DOMContentLoaded', function () {
         piece.style.left = '50%';
         piece.style.transform = 'translate(-50%, -50%)';
         piece.style.zIndex = '1'; // Ensures it displays above the board
+    }
+
+    function updateTurnIndicator() {
+        // First, remove the active class from all player rows
+        document.querySelectorAll('.player-score').forEach(playerRow => {
+            playerRow.classList.remove('active');
+        });
+
+        // Add the active class to the current player's row
+        const currentPlayerRow = document.getElementById(`${currentTurn}-player`);
+        if (currentPlayerRow) {
+            currentPlayerRow.classList.add('active');
+        }
+
+        console.log('Current turn updated to:', currentTurn);
+    }
+
+// Function to advance to the next player's turn
+    function advanceTurn() {
+        const players = ['blue', 'red', 'green', 'yellow'];
+        const currentIndex = players.indexOf(currentTurn);
+        const nextIndex = (currentIndex + 1) % players.length;
+        currentTurn = players[nextIndex];
+        updateTurnIndicator();
     }
 
 });
