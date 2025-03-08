@@ -124,6 +124,14 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById(`yellow-score`).innerText = player4Score;
 
 
+        // First, reset all board pieces to black (removing all color classes)
+        document.querySelectorAll('[id^="board-"]').forEach(pieceElement => {
+            // Remove all color classes
+            pieceElement.classList.remove("blue", "red", "green", "yellow");
+            // Add black class
+            pieceElement.classList.add("black");
+        });
+
         board.forEach((row, rowIndex) => {
             row.forEach((col, colIndex) => {
                 col.forEach((cell, cellIndex) => {
@@ -270,7 +278,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     console.error('Error making move:', error);
 
                     // Move the piece back to its original position on error
-                    movePieceBackToOriginalPosition(pieceId, piece, cell);
+                     movePieceBackToOriginalPosition(pieceId, piece, cell);
                 }
             } else {
                 console.warn('Piece not found with ID:', pieceId);
