@@ -1,8 +1,11 @@
 package com.example.otrio.model;
 
-import java.util.Arrays;
+import lombok.Getter;
 
+import java.util.Arrays;
+@Getter
 public class Board {
+
     private Piece[][][] board;
     public int gameWon = 0;
     public String winnerColor;
@@ -330,21 +333,4 @@ public class Board {
         return false;
     }
 
-    public Piece[][][] getBoard() {
-        return board;
-    }
-    public void printBoard() {
-        board = getBoard();
-        System.out.println(Arrays.deepToString(board));
-    }
-
-    public void visualizeBoard() {
-        board = getBoard();
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                System.out.print("[" + board[i][j][0] + ", " + board[i][j][1] + ", " + board[i][j][2] + "]");
-            }
-            System.out.println();
-        }
-    }
 }
