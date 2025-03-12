@@ -98,12 +98,6 @@ public class GameController {
 
     }
 
-    @PostMapping("/move")
-    public Boolean makeMove(@RequestParam int row, @RequestParam int col, @RequestParam String color, @RequestParam int size) throws InvalidGameException, NotFoundException {
-
-        Player player = gameService.getPlayerByColor(color);
-        return gameService.makeMove(row, col, size, player);
-    }
 
     @GetMapping("/checkWin")
     public String getWinner() {
@@ -115,21 +109,4 @@ public class GameController {
     }
 
 
-    // commented out for now
-//    @GetMapping("/status")
-//    @ResponseBody
-//    public Piece[][] getBoard() {
-//        return gameService.getBoard();
-//    }
-
-//    @PostMapping("/reset")
-//    public String resetGame() {
-//        gameService.reset();
-//        return "Game has been reset.";
-//    }
-
-//    @GetMapping("/currentTurn")
-//    public String getCurrentTurn() {
-//        return gameService.getCurrentTurn();
-//    }
 }
