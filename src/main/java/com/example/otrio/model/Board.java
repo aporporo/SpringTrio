@@ -2,7 +2,6 @@ package com.example.otrio.model;
 
 import lombok.Getter;
 
-import java.util.Arrays;
 @Getter
 public class Board {
 
@@ -101,7 +100,7 @@ public class Board {
             for (int col = 0; col < 3; col++) {
 
                 // check if player has placed a small piece in this row
-                if (board[row][col][0] != null && board[row][col][0].getColor().equals(player.color)) {
+                if (board[row][col][0] != null && board[row][col][0].color().equals(player.color)) {
                     if (size1Col == -1) {
                         size1Col = col;
                     } else if (size1Col != col && size1Col2 == -2) {
@@ -112,7 +111,7 @@ public class Board {
                 }
 
                 // check if player has placed a medium piece
-                if (board[row][col][1] != null && board[row][col][1].getColor().equals(player.color)) {
+                if (board[row][col][1] != null && board[row][col][1].color().equals(player.color)) {
                     if (size2Col == -1) {
                         size2Col = col;
                     } else if (size2Col != col && size2Col2 == -2) {
@@ -124,7 +123,7 @@ public class Board {
                 }
 
                 // check if player placed a large piece
-                if (board[row][col][2] != null && board[row][col][2].getColor().equals(player.color)) {
+                if (board[row][col][2] != null && board[row][col][2].color().equals(player.color)) {
                     if (size3Col == -1) {
                         size3Col = col;
                     } else if (size3Col != col && size3Col2 == -2) {
@@ -168,7 +167,7 @@ public class Board {
             int size1Row3 = -3, size2Row3 = -3, size3Row3 = -3;
 
             for (int row = 0; row < 3; row++) {
-                if (board[row][col][0] != null && board[row][col][0].getColor().equals(player.color)) {
+                if (board[row][col][0] != null && board[row][col][0].color().equals(player.color)) {
                     if (size1Row == -1) {
                         size1Row = row;
                     } else if (size1Row != row && size1Row2 == -2) {
@@ -177,7 +176,7 @@ public class Board {
                         size1Row3 = row;
                     }
                 }
-                if (board[row][col][1] != null && board[row][col][1].getColor().equals(player.color)) {
+                if (board[row][col][1] != null && board[row][col][1].color().equals(player.color)) {
                     if (size2Row == -1) {
                         size2Row = row;
                     } else if (size2Row != row && size2Row2 == -2) {
@@ -186,7 +185,7 @@ public class Board {
                         size2Row3 = row;
                     }
                 }
-                if (board[row][col][2] != null && board[row][col][2].getColor().equals(player.color)) {
+                if (board[row][col][2] != null && board[row][col][2].color().equals(player.color)) {
                     if (size3Row == -1) {
                         size3Row = row;
                     } else if (size3Row != row && size3Row2 == -2) {
@@ -230,7 +229,7 @@ public class Board {
 
         // this will check the main diagonal, top left to bottom right
         for (int i = 0; i < 3; i++) {
-            if (board[i][i][0] != null && board[i][i][0].getColor().equals(player.color)) {
+            if (board[i][i][0] != null && board[i][i][0].color().equals(player.color)) {
                 if (size1Index == -1) {
                     size1Index = i;
                 } else if (size1Index != i && size1Index2 == -2) {
@@ -239,7 +238,7 @@ public class Board {
                     size1Index3 = i;
                 }
             }
-            if (board[i][i][1] != null && board[i][i][1].getColor().equals(player.color)) {
+            if (board[i][i][1] != null && board[i][i][1].color().equals(player.color)) {
                 if (size2Index == -1) {
                     size2Index = i;
                 } else if (size2Index != i && size2Index2 == -2) {
@@ -248,7 +247,7 @@ public class Board {
                     size2Index3 = i;
                 }
             }
-            if (board[i][i][2] != null && board[i][i][2].getColor().equals(player.color)) {
+            if (board[i][i][2] != null && board[i][i][2].color().equals(player.color)) {
                 if (size3Index == -1) {
                     size3Index = i;
                 } else if (size3Index != i && size3Index2 == -2) {
@@ -274,7 +273,7 @@ public class Board {
         size1Index3 = -3; size2Index3 = -3; size3Index3 = -3;
 
         for (int i = 0; i < 3; i++) {
-            if (board[i][2 - i][0] != null && board[i][2 - i][0].getColor().equals(player.color)) {
+            if (board[i][2 - i][0] != null && board[i][2 - i][0].color().equals(player.color)) {
                 if (size1Index == -1) {
                     size1Index = i;
                 } else if (size1Index != i && size1Index2 == -2) {
@@ -283,7 +282,7 @@ public class Board {
                     size1Index3 = i;
                 }
             }
-            if (board[i][2 - i][1] != null && board[i][2 - i][1].getColor().equals(player.color)) {
+            if (board[i][2 - i][1] != null && board[i][2 - i][1].color().equals(player.color)) {
                 if (size2Index == -1) {
                     size2Index = i;
                 } else if (size2Index != i && size2Index2 == -2) {
@@ -292,7 +291,7 @@ public class Board {
                     size2Index3 = i;
                 }
             }
-            if (board[i][2 - i][2] != null && board[i][2 - i][2].getColor().equals(player.color)) {
+            if (board[i][2 - i][2] != null && board[i][2 - i][2].color().equals(player.color)) {
                 if (size3Index == -1) {
                     size3Index = i;
                 } else if (size3Index != i && size3Index2 == -2) {
@@ -322,9 +321,9 @@ public class Board {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 if (board[row][col][0] != null && board[row][col][1] != null && board[row][col][2] != null) {
-                    if (board[row][col][0].getColor().equals(player.color) &&
-                            board[row][col][1].getColor().equals(player.color) &&
-                            board[row][col][2].getColor().equals(player.color)) {
+                    if (board[row][col][0].color().equals(player.color) &&
+                            board[row][col][1].color().equals(player.color) &&
+                            board[row][col][2].color().equals(player.color)) {
                         return true;
                     }
                 }

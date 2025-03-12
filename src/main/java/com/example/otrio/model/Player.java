@@ -72,7 +72,7 @@ public class Player {
         int count = 0;
 
         for (Piece piece : piece) {
-            if (piece != null && piece.getSize() == size) {
+            if (piece != null && piece.size() == size) {
                 count++;
                 if (count >= 3) {
                     System.out.println(count);
