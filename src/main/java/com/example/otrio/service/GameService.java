@@ -173,7 +173,7 @@ public class GameService {
 
     public void reset() {
         board = new Board();
-        playerTurn = getPlayerByColor(getWinner()).playerId;
+        playerTurn = getPlayerByColor(getWinner()).getPlayerId();
         winner = "";
 
     }

@@ -1,20 +1,14 @@
 package com.example.otrio.model;
 
+import lombok.Data;
+
+@Data
 public class Player {
     public Piece[] piece;
     public String playerName;
     public String color;
-    public int wins;
-
-    public int getPlayerId() {
-        return playerId;
-    }
-
-    public void setPlayerId(int playerId) {
-        this.playerId = playerId;
-    }
-
-    public int playerId;
+    private int wins;
+    private int playerId;
 
     public Player (String color, String playerName, int playerId) {
         this.playerName = playerName;
@@ -22,39 +16,6 @@ public class Player {
         this.piece = new Piece[9];
         this.playerId = playerId;
         wins = 0;
-    }
-
-    public void printPiece() {
-        for (int i = 0; i < 9; i++) {
-            if (piece[i] == null) {
-                System.out.print("null ");
-            } else {
-                System.out.print(piece[i].toString() + " ");
-            }
-
-        }
-
-    }
-    public void resetPieces() {
-        this.piece = new Piece[9];
-    }
-
-
-
-    public void setPiece(Piece[] piece) {
-        this.piece = piece;
-    }
-
-    public String getPlayerName() {
-        return playerName;
-    }
-
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
-    }
-
-    public Piece[] getPiece() {
-        return piece;
     }
 
     public void playerWon() {
