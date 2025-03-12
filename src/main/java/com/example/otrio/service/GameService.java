@@ -7,11 +7,13 @@ import com.example.otrio.model.Board;
 import com.example.otrio.model.Game;
 import com.example.otrio.model.Player;
 import com.example.otrio.storage.GameStorage;
+import lombok.Data;
 import org.springframework.stereotype.Service;
 
 import static com.example.otrio.model.GameStatus.*;
 
 @Service
+@Data
 public class GameService {
     private Board board;
     private int playerTurn;
@@ -20,19 +22,8 @@ public class GameService {
     public Player player3;
     public Player player4;
     public String winner;
-
-    public String getGameId() {
-        return gameId;
-    }
-
     public String gameId;
-
-    public void setGame(Game game) {
-        this.game = game;
-    }
-
     public Game game;
-
 
     public GameService(Player player) {
         board = new Board();
@@ -59,38 +50,6 @@ public class GameService {
 
     }
 
-
-
-    public Boolean makeMove(int row, int col, int size, Player player) throws NotFoundException, InvalidGameException {
-//        System.out.println("Player ID = " + player.playerId + ", Player Turn = " + playerTurn);
-//        if (player.playerId == playerTurn && board.placePiece(row, col, size, player)) {
-//        if (!GameStorage.getInstance().getGames().containsKey(this.getGameId())) {
-//            throw new NotFoundException("Game not found");
-//        }
-
-        Game game = GameStorage.getInstance().getGames().get(this.getGameId());
-//        if (game.getStatus().equals(FINISHED)) {
-//            throw new InvalidGameException("Game is already finished");
-//        }
-        if (board.placePiece(row, col, size, player)) {
-            if (board.gameWon == 1) {
-                winner = board.winnerColor;
-                System.out.println(winner);
-            }
-
-            if (playerTurn == 4) {
-                playerTurn = 1;
-            } else {
-                playerTurn++;
-            }
-            return true;
-        } else {
-//            System.out.println("Error in GAME makeMove");
-            return false;
-        }
-
-    }
-
     public Game reset(String gameId) {
         Game game = GameStorage.getInstance().getGames().get(gameId);
 
@@ -99,22 +58,27 @@ public class GameService {
         game.resetPieces(game.getPlayer2());
         game.resetPieces(game.getPlayer3());
         game.resetPieces(game.getPlayer4());
-        if (winner.equals("blue")) {
-            game.setCurrentTurn(1);
-            playerTurn = 1;
-            System.out.println("reset turn to 1");
-        } else if (winner.equals("red")) {
-            game.setCurrentTurn(2);
-            playerTurn = 2;
-            System.out.println("reset turn to 2");
-        } else if (winner.equals("green")) {
-            game.setCurrentTurn(3);
-            playerTurn = 3;
-            System.out.println("reset turn to 3");
-        } else if (winner.equals("yellow")) {
-            game.setCurrentTurn(4);
-            playerTurn = 4;
-            System.out.println("reset turn to 4");
+        switch (winner) {
+            case "blue" -> {
+                game.setCurrentTurn(1);
+                playerTurn = 1;
+                System.out.println("reset turn to 1");
+            }
+            case "red" -> {
+                game.setCurrentTurn(2);
+                playerTurn = 2;
+                System.out.println("reset turn to 2");
+            }
+            case "green" -> {
+                game.setCurrentTurn(3);
+                playerTurn = 3;
+                System.out.println("reset turn to 3");
+            }
+            case "yellow" -> {
+                game.setCurrentTurn(4);
+                playerTurn = 4;
+                System.out.println("reset turn to 4");
+            }
         }
 
         System.out.println("reset test: winner" + this.winner);
@@ -157,41 +121,6 @@ public class GameService {
         return game;
     }
 
-    public String getWinner() {
-        return winner;
-    }
-
-    public Board getBoard() {
-        return board;
-    }
-
-
-
-    public int isPlayerTurn() {
-        return playerTurn;
-    }
-
-    public void reset() {
-        board = new Board();
-        playerTurn = getPlayerByColor(getWinner()).getPlayerId();
-        winner = "";
-
-    }
-
-    public Player getPlayerByColor(String color) {
-        if (color.equals(player1.color)) {
-            return player1;
-        } else if (color.equals(player2.color)) {
-            return player2;
-        } else if (color.equals(player3.color)) {
-            return player3;
-        } else {
-            return player4;
-        }
-
-
-    }
-
     public Game createGame (Player player) {
 
         GameService gameService = new GameService(player);
@@ -212,13 +141,12 @@ public class GameService {
         throw new InvalidParamException("Player not found in the game");
     }
 
-    public Game getGame() {
-        return game;
-    }
+//    public Game getGame() {
+//        return game;
+//    }
 
     public Game getGameById(String gameId) {
-        Game game = GameStorage.getInstance().getGames().get(gameId);
-        return game;
+        return GameStorage.getInstance().getGames().get(gameId);
     }
 
     public Game connectToGame(String playerName, String gameId) throws InvalidParamException, InvalidGameException {
@@ -261,8 +189,4 @@ public class GameService {
         GameStorage.getInstance().setGame(game);
         return game;
     }
-
-
-
-
 }
