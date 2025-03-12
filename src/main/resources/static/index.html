@@ -13,10 +13,11 @@
         html, body {
             height: 100%;
             margin: 0;
+            padding: 0;
             background-color: #0a0a20;
             color: #33ff66;
             font-family: 'Press Start 2P', cursive;
-            overflow: hidden;
+            overflow: visible;
             background-image:
                     linear-gradient(to right, rgba(20, 0, 80, 0.1) 1px, transparent 1px),
                     linear-gradient(to bottom, rgba(20, 0, 80, 0.1) 1px, transparent 1px);
@@ -26,8 +27,8 @@
 
         body {
             display: flex;
-            justify-content: center;
-            align-items: center;
+            flex-direction: column; /* Change to column layout */
+            align-items: center;    /* Center horizontally */
             box-shadow: inset 0 0 150px rgba(77, 0, 153, 0.6);
         }
 
@@ -47,18 +48,14 @@
         }
 
         header {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            text-align: center;
             width: 100%;
-            padding: 15px;
+            text-align: center;
+            padding: 10px 0;
             background-color: rgba(10, 10, 32, 0.8);
             border-bottom: 3px solid #33ff66;
             text-shadow: 0 0 10px #33ff66, 0 0 20px #33ff66;
             box-shadow: 0 0 15px #33ff66;
+            margin-bottom: 20px;
         }
 
         h1 {
@@ -86,9 +83,7 @@
                     0 0 0 8px #111,
                     0 5px 15px rgba(0, 0, 0, 0.7),
                     inset 0 0 30px rgba(0, 0, 255, 0.4);
-            margin-top: 40px;
         }
-
         .game-area {
             display: flex;
             flex-direction: column;
