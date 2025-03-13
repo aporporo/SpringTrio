@@ -25,12 +25,12 @@ public class GameService {
     public String gameId;
     public Game game;
 
-    public GameService(Player player) {
+    public GameService(Player player, String gameId) {
         board = new Board();
         playerTurn = 1;
         this.player1 = player;
 //        gameId = UUID.randomUUID().toString();
-        gameId = "1";
+        this.gameId = gameId;
         this.game = new Game();
         game.setBoard(board);
         game.setGameId(gameId);
@@ -121,9 +121,10 @@ public class GameService {
         return game;
     }
 
-    public Game createGame (Player player) {
+    public Game createGame (String playerName, String gameId) {
+        Player player = new Player("blue", playerName, 1);
 
-        GameService gameService = new GameService(player);
+        GameService gameService = new GameService(player, gameId);
 
         return gameService.getGame();
     }

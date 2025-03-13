@@ -24,13 +24,13 @@ public class GameController {
 
     /**
      * This will start a new game with the player as the host
-     * @param player The player initiating the game
+     * @param request The player initiating the game
      * @return The created game
      */
     @PostMapping("/start")
-    public ResponseEntity<Game> start(@RequestBody Player player) {
-        log.info("start game request: {}", player);
-        return ResponseEntity.ok(gameService.createGame(player));
+    public ResponseEntity<Game> start(@RequestBody ConnectRequest request) {
+        log.info("start game request: {}", request);
+        return ResponseEntity.ok(gameService.createGame(request.getPlayerName(), request.getGameId()));
     }
 
     /**

@@ -248,7 +248,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            gameId: "1",
+                            gameId: gameId,
                             playerId: playerId,
                             row: row,
                             col: col,

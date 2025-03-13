@@ -40,6 +40,11 @@ function create_game() {
     if (login == null || login === '') {
         alert("Please enter login");
     } else {
+        let game_Id = document.getElementById("game_id").value;
+        gameId = game_Id;
+        if (game_Id == null || game_Id === '') {
+            alert("Please enter game id");
+        }
         $.ajax({
             url: url + "/game/start",
             type: 'POST',
@@ -47,15 +52,14 @@ function create_game() {
             contentType: "application/json",
             data: JSON.stringify({
                 "playerName": login,
-                "color": "blue",
-                "playerId": 1
+                "gameId": gameId
             }),
             success: function (data) {
                 gameId = data.gameId;
                 playerType = 'X';
                 // reset();
-                connectToSocket("1");
-                alert("Your created a game. Game id is: " + data.gameId);
+                connectToSocket(gameId);
+                alert(login + " created a game. Game id is: " + data.gameId);
                 playerId = 1;
                 console.log(`Current Player ID set to: ${playerId}`)
                 gameOn = true;
@@ -100,7 +104,8 @@ function connectToSpecificGame() {
     if (login == null || login === '') {
         alert("Please enter login");
     } else {
-        let gameId = document.getElementById("game_id").value;
+        let game_Id = document.getElementById("game_id").value;
+        gameId = game_Id;
         if (gameId == null || gameId === '') {
             alert("Please enter game id");
         }
@@ -111,7 +116,7 @@ function connectToSpecificGame() {
             contentType: "application/json",
             data: JSON.stringify({
                 "playerName": login,
-                "gameId": "1"
+                "gameId": gameId
             }),
             success: function (data) {
                 gameId = data.gameId;
