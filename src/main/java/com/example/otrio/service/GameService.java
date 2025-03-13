@@ -106,13 +106,13 @@ public class GameService {
                 //game.setBoard(new Board());
             }
 
+            int nextTurn;
             if (game.getCurrentTurn() == 4) {
-                playerTurn = 1;
-                game.setCurrentTurn(playerTurn);
+                nextTurn = 1;
             } else {
-                playerTurn++;
-                game.setCurrentTurn(playerTurn);
+                nextTurn = game.getCurrentTurn() + 1;
             }
+            game.setCurrentTurn(nextTurn);
         } else {
             throw new InvalidGameException("Error in gameMove method");
         }
