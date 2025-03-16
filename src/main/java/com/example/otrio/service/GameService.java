@@ -59,28 +59,31 @@ public class GameService {
         game.resetPieces(game.getPlayer2());
         game.resetPieces(game.getPlayer3());
         game.resetPieces(game.getPlayer4());
-        switch (winner) {
-            case "blue" -> {
-                game.setCurrentTurn(1);
-                playerTurn = 1;
-                System.out.println("reset turn to 1");
-            }
-            case "red" -> {
-                game.setCurrentTurn(2);
-                playerTurn = 2;
-                System.out.println("reset turn to 2");
-            }
-            case "green" -> {
-                game.setCurrentTurn(3);
-                playerTurn = 3;
-                System.out.println("reset turn to 3");
-            }
-            case "yellow" -> {
-                game.setCurrentTurn(4);
-                playerTurn = 4;
-                System.out.println("reset turn to 4");
+        if (winner != null) {
+            switch (winner) {
+                case "blue" -> {
+                    game.setCurrentTurn(1);
+                    playerTurn = 1;
+                    System.out.println("reset turn to 1");
+                }
+                case "red" -> {
+                    game.setCurrentTurn(2);
+                    playerTurn = 2;
+                    System.out.println("reset turn to 2");
+                }
+                case "green" -> {
+                    game.setCurrentTurn(3);
+                    playerTurn = 3;
+                    System.out.println("reset turn to 3");
+                }
+                case "yellow" -> {
+                    game.setCurrentTurn(4);
+                    playerTurn = 4;
+                    System.out.println("reset turn to 4");
+                }
             }
         }
+
 
         System.out.println("reset test: winner" + this.winner);
         
