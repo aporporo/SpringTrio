@@ -16,20 +16,14 @@ import static com.example.otrio.model.GameStatus.*;
 @Data
 public class GameService {
     private Board board;
-    private int playerTurn;
-    public Player player1;
-    public Player player2;
-    public Player player3;
-    public Player player4;
-    public String winner;
-    public String gameId;
-    public Game game;
+    private String winner;
+    private String gameId;
+    private Game game;
 
     public GameService(Player player, String gameId) {
         board = new Board();
-        playerTurn = 1;
-        this.player1 = player;
         this.gameId = gameId;
+
         this.game = new Game();
         game.addActivePlayer(player.getPlayerId());
         game.setBoard(board);
@@ -37,57 +31,46 @@ public class GameService {
         game.setPlayer1(player);
         game.setStatus(NEW);
         game.setCurrentTurn(1);
+
         GameStorage.getInstance().setGame(game);
     }
 
     public GameService() {
         board = new Board();
-        playerTurn = 1;
-        this.player1 = new Player("blue", "P1", 1);
-        this.player2 = new Player("red", "P2", 2);
-        this.player3 = new Player("green", "P3", 3);
-        this.player4 = new Player("yellow", "P4", 4);
 
     }
 
     public Game reset(String gameId) {
         Game game = GameStorage.getInstance().getGames().get(gameId);
 
+        // reset board and player pieces
         game.setBoard(new Board());
         game.resetPieces(game.getPlayer1());
         game.resetPieces(game.getPlayer2());
         game.resetPieces(game.getPlayer3());
         game.resetPieces(game.getPlayer4());
+
+        // set turn to previous winner if not null
         if (winner != null) {
             switch (winner) {
                 case "blue" -> {
                     game.setCurrentTurn(1);
-                    playerTurn = 1;
-                    System.out.println("reset turn to 1");
                 }
                 case "red" -> {
                     game.setCurrentTurn(2);
-                    playerTurn = 2;
-                    System.out.println("reset turn to 2");
                 }
                 case "green" -> {
                     game.setCurrentTurn(3);
-                    playerTurn = 3;
-                    System.out.println("reset turn to 3");
                 }
                 case "yellow" -> {
                     game.setCurrentTurn(4);
-                    playerTurn = 4;
-                    System.out.println("reset turn to 4");
                 }
             }
         }
 
-
-        System.out.println("reset test: winner" + this.winner);
-        
+        // clear winner
         this.winner = null;
-        System.out.println("reset test: after winner" + this.winner);
+
         GameStorage.getInstance().setGame(game);
         return game;
     }
@@ -98,18 +81,25 @@ public class GameService {
         }
         Game game = GameStorage.getInstance().getGames().get(gameId);
 
-
+        // first half of if statement validates correct player trying to make move, second half returns boolean if the move is valid
         if (player.getPlayerId() == game.getCurrentTurn() && game.getBoard().placePiece(row, col, size, player)) {
+            // records the last move made by placePiece in the if statement
             game.setLastMove(new String[]{
-                    String.valueOf(row), String.valueOf(col), String.valueOf(size), player.color
+                    String.valueOf(row), String.valueOf(col), String.valueOf(size), player.getColor()
             });
-            if (game.getBoard().gameWon == 1) {
-                winner = game.getBoard().winnerColor;
-                System.out.println(winner);
+
+            // check for a winner
+            if (game.getBoard().getGameWon() == 1) {
+                winner = game.getBoard().getWinnerColor();
             }
 
+            // checks list of active players, gets the id of current player, finds position of the current player in the list
             int currentIndex = game.getActivePlayerIds().indexOf(game.getCurrentTurn());
+
+            // moves to the next player, then ensures it wraps around when it reaches the end of the list
             int nextIndex = (currentIndex + 1) % game.getActivePlayerIds().size();
+
+            // gets playerId at nextIndex, so they are the next player to take a turn
             int nextTurn = game.getActivePlayerIds().get(nextIndex);
             game.setCurrentTurn(nextTurn);
         } else {
@@ -148,15 +138,15 @@ public class GameService {
     }
 
     public Game connectToGame(String playerName, String gameId) throws InvalidParamException, InvalidGameException {
-        if (!GameStorage.getInstance().getGames().containsKey(gameId)) {
+        Game game = getGameById(gameId);
+        if (game == null) {
             throw new InvalidParamException("Cannot find game with matching game id");
         }
-        Game game = GameStorage.getInstance().getGames().get(gameId);
 
+        // check if player is rejoining, if so rejoin game from existing player game state
         Player existingPlayer = findExistingPlayer(game, playerName);
         if (existingPlayer != null) {
-            // Player is rejoining - add them back to active players
-            // The Game class doesn't check for duplicates in addActivePlayer, so we need to check
+
             if (!game.getActivePlayerIds().contains(existingPlayer.getPlayerId())) {
                 game.addActivePlayer(existingPlayer.getPlayerId());
             }
@@ -164,6 +154,7 @@ public class GameService {
             return game;
         }
 
+        // add new player to the game
         Player player;
         if (game.getPlayer4() != null) {
             throw new InvalidGameException("Game is not valid anymore");
@@ -207,6 +198,7 @@ public class GameService {
                 .filter(it -> it.getStatus().equals(NEW))
                 .findFirst().orElseThrow(() -> new NotFoundException("Game not found"));
 
+        // add player to first available slot
         if (game.getPlayer3() != null) {
             game.setPlayer4(player);
         } else if (game.getPlayer2() != null) {
@@ -214,6 +206,8 @@ public class GameService {
         } else {
             game.setPlayer2(player);
         }
+
+        game.addActivePlayer(player.getPlayerId());
         game.setStatus(IN_PROGRESS);
         GameStorage.getInstance().setGame(game);
         return game;
