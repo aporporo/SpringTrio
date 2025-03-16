@@ -30,7 +30,6 @@ public class GameController {
     @PostMapping("/start")
     public ResponseEntity<Game> start(@RequestBody ConnectRequest request) throws InvalidParamException {
         log.info("start game request: {}", request);
-//        return ResponseEntity.ok(gameService.createGame(request.getPlayerName(), request.getGameId()));
         Game game = gameService.createGame(request.getPlayerName(), request.getGameId());
 
         // Broadcast new game creation
@@ -49,7 +48,6 @@ public class GameController {
     @PostMapping("/connect")
     public ResponseEntity<Game> connect(@RequestBody ConnectRequest request) throws InvalidParamException, InvalidGameException {
         log.info("connect request: {}", request);
-//        return ResponseEntity.ok(gameService.connectToGame(request.getPlayerName(), request.getGameId()));
         Game game = gameService.connectToGame(request.getPlayerName(), request.getGameId());
 
         // Broadcast to all clients that a new player has joined
@@ -110,7 +108,6 @@ public class GameController {
 
     }
 
-
     @GetMapping("/checkWin")
     public String getWinner() {
         String player = gameService.getWinner();
@@ -119,6 +116,4 @@ public class GameController {
         }
         return player;
     }
-
-
 }
