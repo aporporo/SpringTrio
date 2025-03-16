@@ -30,7 +30,13 @@ public class GameController {
     @PostMapping("/start")
     public ResponseEntity<Game> start(@RequestBody ConnectRequest request) throws InvalidParamException {
         log.info("start game request: {}", request);
-        return ResponseEntity.ok(gameService.createGame(request.getPlayerName(), request.getGameId()));
+//        return ResponseEntity.ok(gameService.createGame(request.getPlayerName(), request.getGameId()));
+        Game game = gameService.createGame(request.getPlayerName(), request.getGameId());
+
+        // Broadcast new game creation
+        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game);
+
+        return ResponseEntity.ok(game);
     }
 
     /**
@@ -43,7 +49,13 @@ public class GameController {
     @PostMapping("/connect")
     public ResponseEntity<Game> connect(@RequestBody ConnectRequest request) throws InvalidParamException, InvalidGameException {
         log.info("connect request: {}", request);
-        return ResponseEntity.ok(gameService.connectToGame(request.getPlayerName(), request.getGameId()));
+//        return ResponseEntity.ok(gameService.connectToGame(request.getPlayerName(), request.getGameId()));
+        Game game = gameService.connectToGame(request.getPlayerName(), request.getGameId());
+
+        // Broadcast to all clients that a new player has joined
+        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game);
+
+        return ResponseEntity.ok(game);
     }
 
     /**

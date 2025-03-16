@@ -63,6 +63,7 @@ function create_game() {
                 playerId = 1;
                 console.log(`Current Player ID set to: ${playerId}`)
                 gameOn = true;
+                updateBoard(data);
             },
             error: function (error) {
                 console.log(error);
@@ -133,6 +134,7 @@ function connectToSpecificGame() {
                         break;
                     }
                 }
+                 updateBoard(data);
             },
             error: function (error) {
                 console.log(error);
