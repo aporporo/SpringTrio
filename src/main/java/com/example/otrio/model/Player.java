@@ -4,9 +4,9 @@ import lombok.Data;
 
 @Data
 public class Player {
-    public Piece[] piece;
+    private Piece[] piece;
     private String playerName;
-    public String color;
+    private String color;
     private int wins;
     private int playerId;
 

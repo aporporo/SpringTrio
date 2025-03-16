@@ -21,7 +21,7 @@ public class Game {
 
     public void resetPieces(Player player) {
         if (player != null) {
-            player.piece = new Piece[9];
+            player.setPiece(new Piece[9]);
         }
 
     }
