@@ -87,16 +87,21 @@ document.addEventListener('DOMContentLoaded', function () {
             let winner = await response.text();
 
             if (winner) {
+                let winnerName = "";
                 if (winner === "blue") {
                     updateScoreboard("blue");
+                    winnerName = document.getElementById("blue-name").innerText;
                 } else if (winner === "red") {
                     updateScoreboard("red");
+                    winnerName = document.getElementById("red-name").innerText;
                 } else if (winner === "green") {
                     updateScoreboard("green");
+                    winnerName = document.getElementById("green-name").innerText;
                 } else if (winner === "yellow") {
                     updateScoreboard("yellow");
+                    winnerName = document.getElementById("yellow-name").innerText;
                 }
-                alert(`${winner} player has won!`);
+                alert(`${winner} has won!`);
                 winner = null;
                 await resetGame();
             } else {
@@ -105,6 +110,13 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (error) {
             console.error("Error fetching winner:", error);
         }
+    }
+
+    function hideEmptyPlayerRows(data) {
+        // Hide player rows for players that don't exist
+        document.getElementById("red-player").style.display = data.player2 ? "flex" : "none";
+        document.getElementById("green-player").style.display = data.player3 ? "flex" : "none";
+        document.getElementById("yellow-player").style.display = data.player4 ? "flex" : "none";
     }
     function updateBoard(data) {
         const board = data.board.board;
@@ -115,6 +127,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const player3Score = data.player3 ? data.player3.wins : 0;
         const player4Score = data.player4 ? data.player4.wins : 0;
 
+        // Get player names
+        const player1Name = data.player1 ? data.player1.playerName : "Player 1";
+        const player2Name = data.player2 ? data.player2.playerName : "Player 2";
+        const player3Name = data.player3 ? data.player3.playerName : "Player 3";
+        const player4Name = data.player4 ? data.player4.playerName : "Player 4";
+
         advanceTurn(playerTurn);
 
 
@@ -122,6 +140,11 @@ document.addEventListener('DOMContentLoaded', function () {
             document.getElementById(`red-score`).innerText = player2Score;
             document.getElementById(`green-score`).innerText = player3Score;
             document.getElementById(`yellow-score`).innerText = player4Score;
+        // Update player names
+        document.getElementById(`blue-name`).innerText = player1Name;
+        document.getElementById(`red-name`).innerText = player2Name;
+        document.getElementById(`green-name`).innerText = player3Name;
+        document.getElementById(`yellow-name`).innerText = player4Name;
 
 
         // First, reset all board pieces to black (removing all color classes)
@@ -151,6 +174,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             });
         });
+
+        hideEmptyPlayerRows(data);
     }
     window.updateBoard = updateBoard;
 

@@ -416,10 +416,26 @@
 <div class="container">
     <div class="sidebar">
         <div class="scoreboard" id="scoreboard">
-            <p class="player-score" id="blue-player"><span class="turn-marker">▶</span> BLUE: <span id="blue-score">0</span></p>
-            <p class="player-score" id="red-player"><span class="turn-marker">▶</span> RED: <span id="red-score">0</span></p>
-            <p class="player-score" id="green-player"><span class="turn-marker">▶</span> GREEN: <span id="green-score">0</span></p>
-            <p class="player-score" id="yellow-player"><span class="turn-marker">▶</span> YELLOW: <span id="yellow-score">0</span></p>
+            <div class="player-score" id="blue-player">
+                <span class="player-name" id="blue-name">Player 1</span>
+                <span class="player-score-value" id="blue-score">0</span>
+            </div>
+            <div class="player-score" id="red-player">
+                <span class="player-name" id="red-name">Player 2</span>
+                <span class="player-score-value" id="red-score">0</span>
+            </div>
+            <div class="player-score" id="green-player">
+                <span class="player-name" id="green-name">Player 3</span>
+                <span class="player-score-value" id="green-score">0</span>
+            </div>
+            <div class="player-score" id="yellow-player">
+                <span class="player-name" id="yellow-name">Player 4</span>
+                <span class="player-score-value" id="yellow-score">0</span>
+            </div>
+<!--            <p class="player-score" id="blue-player"><span class="turn-marker">▶</span> BLUE: <span id="blue-score">0</span></p>-->
+<!--            <p class="player-score" id="red-player"><span class="turn-marker">▶</span> RED: <span id="red-score">0</span></p>-->
+<!--            <p class="player-score" id="green-player"><span class="turn-marker">▶</span> GREEN: <span id="green-score">0</span></p>-->
+<!--            <p class="player-score" id="yellow-player"><span class="turn-marker">▶</span> YELLOW: <span id="yellow-score">0</span></p>-->
         </div>
         <button class="reset-button" onclick="resetGame()">RESET GAME</button>
     </div>
