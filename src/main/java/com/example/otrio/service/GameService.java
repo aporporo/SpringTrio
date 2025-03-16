@@ -161,6 +161,7 @@ public class GameService {
         } else if (game.getPlayer3() != null) {
             player = new Player("yellow", playerName, 4);
             game.setPlayer4(player);
+            game.setStatus(IN_PROGRESS);
         } else if (game.getPlayer2() != null) {
             player = new Player("green", playerName, 3);
             game.setPlayer3(player);
@@ -170,7 +171,7 @@ public class GameService {
         }
 
         game.addActivePlayer(player.getPlayerId());
-        game.setStatus(IN_PROGRESS);
+
         GameStorage.getInstance().setGame(game);
         return game;
 
@@ -193,22 +194,34 @@ public class GameService {
         return null;
     }
 
-    public Game connectToRandomGame(Player player) throws NotFoundException {
+    public Game connectToRandomGame(String playerName) throws NotFoundException, InvalidGameException {
+        // Find a game that is not full (has at least one empty player slot)
         Game game = GameStorage.getInstance().getGames().values().stream()
                 .filter(it -> it.getStatus().equals(NEW))
-                .findFirst().orElseThrow(() -> new NotFoundException("Game not found"));
+                .filter(it -> it.getPlayer4() == null) // Filter games that are not full
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("No open games found. Please create a new game."));
 
-        // add player to first available slot
+        // Add player to first available slot
+        Player player;
         if (game.getPlayer3() != null) {
+            player = new Player("yellow", playerName, 4);
             game.setPlayer4(player);
+            game.setStatus(IN_PROGRESS);
         } else if (game.getPlayer2() != null) {
+            player = new Player("green", playerName, 3);
             game.setPlayer3(player);
-        } else {
+        } else if (game.getPlayer1() != null) {
+            player = new Player("red", playerName, 2);
             game.setPlayer2(player);
+        } else {
+            throw new InvalidGameException("Invalid game state: No players in game");
         }
 
+        // Add player to active players list
         game.addActivePlayer(player.getPlayerId());
-        game.setStatus(IN_PROGRESS);
+
+        // Update game in storage
         GameStorage.getInstance().setGame(game);
         return game;
     }

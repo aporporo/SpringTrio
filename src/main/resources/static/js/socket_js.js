@@ -75,6 +75,7 @@ function create_game() {
 
 function connectToRandom() {
     let login = document.getElementById("login").value;
+
     if (login == null || login === '') {
         alert("Please enter login");
     } else {
@@ -84,7 +85,8 @@ function connectToRandom() {
             dataType: "json",
             contentType: "application/json",
             data: JSON.stringify({
-                "login": login
+                "playerName": login,
+                "gameId": ""
             }),
             success: function (data) {
                 gameId = data.gameId;
@@ -92,6 +94,16 @@ function connectToRandom() {
                 // reset();
                 connectToSocket(gameId);
                 alert("Congrats you're playing with: " + data.player1.login);
+
+                // find the player object that matches the current player name
+                for (let key of ["player1", "player2", "player3", "player4"]) {
+                    if (data[key] && data[key].playerName == login) {
+                        playerId = data[key].playerId;
+                        console.log(`Current Player ID set to: ${playerId}`)
+                        break;
+                    }
+                }
+                updateBoard(data);
             },
             error: function (error) {
                 console.log(error);

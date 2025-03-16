@@ -63,9 +63,14 @@ public class GameController {
      * @throws NotFoundException If no available games are found
      */
     @PostMapping("/connect/random")
-    public ResponseEntity<Game> connectRandom(@RequestBody Player player) throws NotFoundException {
-        log.info("connect random {}", player);
-        return ResponseEntity.ok(gameService.connectToRandomGame(player));
+    public ResponseEntity<Game> connectRandom(@RequestBody ConnectRequest request) throws NotFoundException, InvalidGameException {
+        log.info("connect random {}", request);
+        Game game = gameService.connectToRandomGame(request.getPlayerName());
+
+        // Broadcast to all clients that a new player has joined
+        simpMessagingTemplate.convertAndSend("/topic/game-progress/" + game.getGameId(), game);
+
+        return ResponseEntity.ok(game);
     }
 
     /**
