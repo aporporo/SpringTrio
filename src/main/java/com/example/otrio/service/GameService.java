@@ -128,11 +128,13 @@ public class GameService {
         return game;
     }
 
-    public Game createGame (String playerName, String gameId) {
+    public Game createGame (String playerName, String gameId) throws InvalidParamException {
+        if (GameStorage.getInstance().getGames().containsKey(gameId)) {
+            throw new InvalidParamException("This gameId is already in use");
+        }
+        
         Player player = new Player("blue", playerName, 1);
-
         GameService gameService = new GameService(player, gameId);
-
         return gameService.getGame();
     }
 

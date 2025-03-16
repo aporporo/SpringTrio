@@ -28,7 +28,7 @@ public class GameController {
      * @return The created game
      */
     @PostMapping("/start")
-    public ResponseEntity<Game> start(@RequestBody ConnectRequest request) {
+    public ResponseEntity<Game> start(@RequestBody ConnectRequest request) throws InvalidParamException {
         log.info("start game request: {}", request);
         return ResponseEntity.ok(gameService.createGame(request.getPlayerName(), request.getGameId()));
     }
