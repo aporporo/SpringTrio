@@ -153,6 +153,17 @@ public class GameService {
         }
         Game game = GameStorage.getInstance().getGames().get(gameId);
 
+        Player existingPlayer = findExistingPlayer(game, playerName);
+        if (existingPlayer != null) {
+            // Player is rejoining - add them back to active players
+            // The Game class doesn't check for duplicates in addActivePlayer, so we need to check
+            if (!game.getActivePlayerIds().contains(existingPlayer.getPlayerId())) {
+                game.addActivePlayer(existingPlayer.getPlayerId());
+            }
+            GameStorage.getInstance().setGame(game);
+            return game;
+        }
+
         Player player;
         if (game.getPlayer4() != null) {
             throw new InvalidGameException("Game is not valid anymore");
@@ -172,6 +183,23 @@ public class GameService {
         GameStorage.getInstance().setGame(game);
         return game;
 
+    }
+
+    private Player findExistingPlayer(Game game, String playerName) {
+        // Check player slots in order
+        if (game.getPlayer1() != null && game.getPlayer1().getPlayerName().equals(playerName)) {
+            return game.getPlayer1();
+        }
+        if (game.getPlayer2() != null && game.getPlayer2().getPlayerName().equals(playerName)) {
+            return game.getPlayer2();
+        }
+        if (game.getPlayer3() != null && game.getPlayer3().getPlayerName().equals(playerName)) {
+            return game.getPlayer3();
+        }
+        if (game.getPlayer4() != null && game.getPlayer4().getPlayerName().equals(playerName)) {
+            return game.getPlayer4();
+        }
+        return null;
     }
 
     public Game connectToRandomGame(Player player) throws NotFoundException {
