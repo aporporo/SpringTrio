@@ -87,9 +87,9 @@ public class GameController {
      * @return the reset game state
      */
     @PostMapping("/reset")
-    public ResponseEntity<Game> reset() {
-        Game game = gameService.getGameById("1");
-        gameService.reset("1");
+    public ResponseEntity<Game> reset(@RequestBody GameMoveRequest moveRequest) {
+        Game game = gameService.getGameById(moveRequest.getGameId());
+        gameService.reset(moveRequest.getGameId());
 
         // Update clients about reset
         simpMessagingTemplate.convertAndSend("/topic/game-reset/" + game.getGameId(), game);

@@ -7,7 +7,7 @@ async function resetGame() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                gameId: "1",
+                gameId: gameId,
                 playerId: 0,
                 row: 0,
                 col: 0,

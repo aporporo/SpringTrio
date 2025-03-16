@@ -32,6 +32,7 @@ public class GameService {
 //        gameId = UUID.randomUUID().toString();
         this.gameId = gameId;
         this.game = new Game();
+        game.addActivePlayer(player.getPlayerId());
         game.setBoard(board);
         game.setGameId(gameId);
         game.setPlayer1(player);
@@ -106,12 +107,15 @@ public class GameService {
                 //game.setBoard(new Board());
             }
 
-            int nextTurn;
-            if (game.getCurrentTurn() == 4) {
-                nextTurn = 1;
-            } else {
-                nextTurn = game.getCurrentTurn() + 1;
-            }
+//            int nextTurn;
+//            if (game.getCurrentTurn() == 4) {
+//                nextTurn = 1;
+//            } else {
+//                nextTurn = game.getCurrentTurn() + 1;
+//            }
+            int currentIndex = game.getActivePlayerIds().indexOf(game.getCurrentTurn());
+            int nextIndex = (currentIndex + 1) % game.getActivePlayerIds().size();
+            int nextTurn = game.getActivePlayerIds().get(nextIndex);
             game.setCurrentTurn(nextTurn);
         } else {
             throw new InvalidGameException("Error in gameMove method");
@@ -156,18 +160,21 @@ public class GameService {
         }
         Game game = GameStorage.getInstance().getGames().get(gameId);
 
+        Player player;
         if (game.getPlayer4() != null) {
             throw new InvalidGameException("Game is not valid anymore");
         } else if (game.getPlayer3() != null) {
-            Player player = new Player("yellow", playerName, 4);
+            player = new Player("yellow", playerName, 4);
             game.setPlayer4(player);
         } else if (game.getPlayer2() != null) {
-            Player player = new Player("green", playerName, 3);
+            player = new Player("green", playerName, 3);
             game.setPlayer3(player);
         } else {
-            Player player = new Player("red", playerName, 2);
+            player = new Player("red", playerName, 2);
             game.setPlayer2(player);
         }
+
+        game.addActivePlayer(player.getPlayerId());
         game.setStatus(IN_PROGRESS);
         GameStorage.getInstance().setGame(game);
         return game;
