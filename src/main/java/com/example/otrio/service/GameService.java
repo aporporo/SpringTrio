@@ -81,7 +81,7 @@ public class GameService {
         }
         Game game = GameStorage.getInstance().getGames().get(gameId);
 
-        // first half of if statement validates correct player trying to make move, second half returns boolean if the move is valid
+        // first half of if statement validates correct player trying to make move, second half returns boolean if the move is successful
         if (player.getPlayerId() == game.getCurrentTurn() && game.getBoard().placePiece(row, col, size, player)) {
             // records the last move made by placePiece in the if statement
             game.setLastMove(new String[]{

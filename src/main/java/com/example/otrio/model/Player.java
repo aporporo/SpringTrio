@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class Player {
     public Piece[] piece;
-    public String playerName;
+    private String playerName;
     public String color;
     private int wins;
     private int playerId;

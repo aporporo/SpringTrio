@@ -6,26 +6,12 @@ import lombok.Getter;
 public class Board {
 
     private Piece[][][] board;
-    public int gameWon = 0;
-    public String winnerColor;
+    private int gameWon = 0;
+    private String winnerColor;
 
     // makes the 3x3x3 board
     public Board() {
         board = new Piece[3][3][3];
-        reset();
-    }
-
-
-    public void reset() {
-        gameWon = 0;
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 3; col++) {
-                for (int size = 0; size < 3; size++) {
-                    board[row][col][size] = null;
-                }
-
-            }
-        }
     }
 
     // This will place a piece on the board if the conditions are met
@@ -58,7 +44,7 @@ public class Board {
         }
 
         // Adds the piece to the players list of used pieces
-        player.piece[count] = new Piece(player.color, size);
+        player.getPiece()[count] = new Piece(player.color, size);
         System.out.println("Piece added to player");
 
         // Adds the piece to the board
