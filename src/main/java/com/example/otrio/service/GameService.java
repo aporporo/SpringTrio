@@ -29,7 +29,6 @@ public class GameService {
         board = new Board();
         playerTurn = 1;
         this.player1 = player;
-//        gameId = UUID.randomUUID().toString();
         this.gameId = gameId;
         this.game = new Game();
         game.addActivePlayer(player.getPlayerId());
@@ -107,15 +106,8 @@ public class GameService {
             if (game.getBoard().gameWon == 1) {
                 winner = game.getBoard().winnerColor;
                 System.out.println(winner);
-                //game.setBoard(new Board());
             }
 
-//            int nextTurn;
-//            if (game.getCurrentTurn() == 4) {
-//                nextTurn = 1;
-//            } else {
-//                nextTurn = game.getCurrentTurn() + 1;
-//            }
             int currentIndex = game.getActivePlayerIds().indexOf(game.getCurrentTurn());
             int nextIndex = (currentIndex + 1) % game.getActivePlayerIds().size();
             int nextTurn = game.getActivePlayerIds().get(nextIndex);
@@ -132,7 +124,7 @@ public class GameService {
         if (GameStorage.getInstance().getGames().containsKey(gameId)) {
             throw new InvalidParamException("This gameId is already in use");
         }
-        
+
         Player player = new Player("blue", playerName, 1);
         GameService gameService = new GameService(player, gameId);
         return gameService.getGame();
@@ -150,10 +142,6 @@ public class GameService {
         }
         throw new InvalidParamException("Player not found in the game");
     }
-
-//    public Game getGame() {
-//        return game;
-//    }
 
     public Game getGameById(String gameId) {
         return GameStorage.getInstance().getGames().get(gameId);
