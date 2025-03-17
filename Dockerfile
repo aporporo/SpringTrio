@@ -1,10 +1,8 @@
 FROM maven:3.9.8-eclipse-temurin-21 AS build
 WORKDIR /app
-# Copy pom.xml first
-COPY POM.xml .
-# Copy source files
-COPY src/ ./src/
-# Build the application
+COPY . .
+# Rename POM.xml to pom.xml (case-sensitive in Linux)
+RUN mv POM.xml pom.xml
 RUN mvn clean package -DskipTests
 
 FROM eclipse-temurin:21-jdk
