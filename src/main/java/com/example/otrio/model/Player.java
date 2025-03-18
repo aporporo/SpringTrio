@@ -2,6 +2,8 @@ package com.example.otrio.model;
 
 import lombok.Data;
 
+// test for github
+
 @Data
 public class Player {
     private Piece[] piece;
