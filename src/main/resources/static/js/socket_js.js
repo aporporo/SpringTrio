@@ -1,4 +1,4 @@
-const url = 'https://springtrio.onrender.com/';
+const url = 'https://springtrio.onrender.com';
 let stompClient;
 let gameId;
 let playerType;

@@ -3,7 +3,7 @@ public class CorsConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-            .allowedOrigins("https://springtrio.onrender.com/") // In production, specify your frontend URL instead of *
+            .allowedOrigins("https://springtrio.onrender.com") // In production, specify your frontend URL instead of *
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
             .allowedHeaders("*")
             .allowCredentials(false)
