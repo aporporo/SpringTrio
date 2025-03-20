@@ -122,6 +122,71 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById("green-player").style.display = data.player3 ? "flex" : "none";
         document.getElementById("yellow-player").style.display = data.player4 ? "flex" : "none";
     }
+
+    function updatePlayerPieces(boardData) {
+        // First, make all player pieces visible
+        const allPlayerPieces = {
+            'blue': { 'small': [], 'medium': [], 'large': [] },
+            'red': { 'small': [], 'medium': [], 'large': [] },
+            'green': { 'small': [], 'medium': [], 'large': [] },
+            'yellow': { 'small': [], 'medium': [], 'large': [] }
+        };
+        
+        // Show all player pieces initially
+        document.querySelectorAll('.piece:not([id^="board-"])').forEach(piece => {
+            piece.classList.remove('hidden');
+            
+            // Categorize pieces by color and size
+            const pieceId = piece.id;
+            const parts = pieceId.split('-');
+            if (parts.length === 3) {
+                const color = parts[0];
+                const size = parts[1];
+                if (allPlayerPieces[color] && allPlayerPieces[color][size]) {
+                    allPlayerPieces[color][size].push(piece);
+                }
+            }
+        });
+        
+        // Track used pieces by color and size from the board
+        const usedPieces = {
+            'blue': { 'small': 0, 'medium': 0, 'large': 0 },
+            'red': { 'small': 0, 'medium': 0, 'large': 0 },
+            'green': { 'small': 0, 'medium': 0, 'large': 0 },
+            'yellow': { 'small': 0, 'medium': 0, 'large': 0 }
+        };
+        
+        // Scan the board to count used pieces
+        boardData.forEach((row) => {
+            row.forEach((cell) => {
+                cell.forEach((piece) => {
+                    if (piece) {
+                        const { color, size } = piece;
+                        const sizeClass = size === 0 ? 'small' : size === 1 ? 'medium' : 'large';
+                        if (usedPieces[color] && usedPieces[color][sizeClass] !== undefined) {
+                            usedPieces[color][sizeClass]++;
+                        }
+                    }
+                });
+            });
+        });
+        
+        // Hide used pieces for each player
+        Object.keys(usedPieces).forEach(color => {
+            Object.keys(usedPieces[color]).forEach(size => {
+                const count = usedPieces[color][size];
+                const pieces = allPlayerPieces[color][size];
+                
+                // Hide the appropriate number of pieces
+                for (let i = 0; i < count && i < pieces.length; i++) {
+                    pieces[i].classList.add('hidden');
+                }
+            });
+        });
+        
+        console.log('Used pieces have been updated for all players based on board state');
+    }
+
     function updateBoard(data) {
         const board = data.board.board;
         const playerTurn = data.currentTurn;
@@ -178,6 +243,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
             });
         });
+
+        updatePlayerPieces(board);
 
         hideEmptyPlayerRows(data);
     }
