@@ -59,6 +59,10 @@ function resetPieces() {
 
     console.log('All pieces have been reset.');
 }
+
+function rules() {
+    alert("Winning Combinations:\n3 pieces of the same size in a row\n3 pieces in ascending or descending order\n3 pieces stacked in the same spot");
+}
 document.addEventListener('DOMContentLoaded', function () {
     const board = document.getElementById('board');
     const pieces = document.querySelectorAll('.piece');
