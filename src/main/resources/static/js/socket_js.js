@@ -1,16 +1,22 @@
-const url = 'https://springtrio.onrender.com';
+const url = 'http://localhost:8080';
 let stompClient;
 let gameId;
 let playerType;
 let playerId;
+let currentSocket = null;
+let currentStompClient = null;
 
 function connectToSocket(gameId) {
+
+    disconnectFromSocket();
 
     console.log("connecting to the game");
     console.log("before /game/gameMove in connectToSocket");
     let socket = new SockJS(url + "/game/gameMove");
+    currentSocket = socket;
     console.log("after /game/gameMove in connectToSocket");
     stompClient = Stomp.over(socket);
+    currentStompClient = stompClient;
     console.log("after stompClient in connectToSocket");
     stompClient.connect({}, function (frame) {
         console.log("connected to the frame: " + frame);
@@ -45,6 +51,9 @@ function create_game() {
         if (game_Id == null || game_Id === '') {
             alert("Please enter game id");
         }
+
+        disconnectFromSocket();
+
         $.ajax({
             url: url + "/game/start",
             type: 'POST',
@@ -79,6 +88,9 @@ function connectToRandom() {
     if (login == null || login === '') {
         alert("Please enter login");
     } else {
+
+        disconnectFromSocket();
+
         $.ajax({
             url: url + "/game/connect/random",
             type: 'POST',
@@ -122,6 +134,9 @@ function connectToSpecificGame() {
         if (gameId == null || gameId === '') {
             alert("Please enter game id");
         }
+
+        disconnectFromSocket();
+
         $.ajax({
             url: url + "/game/connect",
             type: 'POST',
@@ -153,4 +168,16 @@ function connectToSpecificGame() {
             }
         })
     }
+}
+
+// Function to explicitly disconnect
+function disconnectFromSocket() {
+    if (currentStompClient && currentStompClient.connected) {
+        console.log("Disconnecting existing STOMP client");
+        currentStompClient.disconnect(function() {
+            console.log("Disconnected successfully");
+        });
+    }
+    currentStompClient = null;
+    currentSocket = null;
 }
